@@ -118,7 +118,7 @@ public class Datastore {
   /**
    * Gets all Users stored in database.
    *
-   * @return a list of Users who has posted, or empty list if no one has posted.
+   * @return a Set of Strings indicating Users who has posted, or empty list if no one has posted.
    *  
    */
   public Set<String> getUsers(){
