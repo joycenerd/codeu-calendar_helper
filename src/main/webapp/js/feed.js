@@ -1,4 +1,3 @@
-
 // Fetch messages and add them to the page.
 function fetchMessages(){
   const url = '/feed';
