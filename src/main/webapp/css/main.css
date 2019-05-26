@@ -17,6 +17,10 @@
 /* Prevent the page from becoming too wide. */
 body {
   max-width: 600px;
+  background-image: url("https://images.unsplash.com/photo-1519750783826-e2420f4d687f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 /* Remove bullet points from navigation bar. */
