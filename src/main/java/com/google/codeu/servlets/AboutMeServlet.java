@@ -10,24 +10,38 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.codeu.data.Datastore;
+import com.google.codeu.data.User;
 
 /* Handles fetching and saving user data */
 
 @WebServlet("/about")
 public class AboutMeServlet extends HttpServlet {
     private Datastore datastore;
+
+    @Override
+    public void init(){
+        datastore=new Datastore();
+    }
     
     @Override
     public void doGet(HttpServletRequest request,HttpServletResponse response)
         throws IOException{
+
             response.setContentType("text/html");
             String user=request.getParameter("user");
+            
             if(user==null || user.equals("")){
                 // Request in invalid, return empty response
                 return;
             }
-            String aboutMe="This is "+user+"'s about me.";
-            response.getOutputStream().println(aboutMe);
+
+            User userData=datastore.getUser(user);
+
+            if(userData==null || userData.getAboutMe()==null){
+                return;
+            }
+
+            response.getOutputStream().println(userData.getAboutMe());
     }
 
     @Override
@@ -38,9 +52,11 @@ public class AboutMeServlet extends HttpServlet {
                 response.sendRedirect("/index.html");
                 return;
             }
+
             String userEmail=userService.getCurrentUser().getEmail();
-            System.out.println("Saving about me for "+userEmail);
-            // TODO: save the data
+            String aboutMe=request.getParameter("about-me");
+            User user=new User(userEmail,aboutMe);
+            datastore.storeUser(user);
             response.sendRedirect("/user-page.html?user="+userEmail);
     }
 }

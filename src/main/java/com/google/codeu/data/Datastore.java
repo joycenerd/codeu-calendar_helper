@@ -135,4 +135,26 @@ public int getTotalMessageCount(){
     }
     return users;
   }
+
+  // Store the User in DataStore
+
+  public void storeUser(User user){
+    Entity userEntity=new Entity("User",user.getEmail());
+    userEntity.setProperty("email", user.getEmail());
+    userEntity.setProperty("aboutMe", user.getAboutMe());
+    datastore.put(userEntity);
+  }
+
+  // Returns the User owned by the email address, or NULL if no matching was found
+  public User getUser(String email){
+    Query query=new Query("User").setFilter(new Query.FilterPredicate("email", FilterOperator.EQUAL, email));
+    PreparedQuery results=datastore.prepare(query);
+    Entity usereEntity=results.asSingleEntity();
+    if(usereEntity==null){return null;}
+    String aboutMe=(String)usereEntity.getProperty("aboutMe");
+    User user=new User(email,aboutMe);
+    return user;
+  }
 }
+
+
