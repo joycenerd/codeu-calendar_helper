@@ -21,6 +21,8 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  font-family: 'Playball',
+    cursive;
 }
 
 /* Remove bullet points from navigation bar. */
