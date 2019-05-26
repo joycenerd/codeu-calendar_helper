@@ -17,6 +17,12 @@
 /* Prevent the page from becoming too wide. */
 body {
   max-width: 600px;
+  background-image: url("https://images.unsplash.com/photo-1457735720963-e277a46f2c68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: 'Playball',
+    cursive;
 }
 
 /* Remove bullet points from navigation bar. */
@@ -28,5 +34,48 @@ nav ul {
 /* Keep navigation menu on one line. */
 nav li {
   display: inline-block;
-  margin-right: 10px
+  margin-right: 10px;
+}
+
+.intro {
+  font-size: 20px;
+}
+
+h1 {
+  color: darkorange;
+}
+
+.brand {
+  font-family: 'Frijole',
+    cursive;
+  text-transform: uppercase;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  animation: 4s blur infinite linear;
+}
+
+@keyframes blur {
+  0% {
+    text-shadow: 0 0 0 white;
+  }
+
+  40% {
+    color: rgba(255, 255, 255, 0);
+    text-shadow: 0 0 30px white;
+  }
+
+  70% {
+    color: rgba(255, 255, 255, 0.4);
+    text-shadow: 0 0 10px white;
+  }
+
+  90% {
+    color: rgba(255, 255, 255, 0.6);
+    text-shadow: 0 0 30px white;
+  }
+
+  100% {
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0);
+  }
 }
