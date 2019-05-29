@@ -19,7 +19,6 @@ package com.google.codeu.servlets;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.JsonObject;
-
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,10 +30,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/login-status")
 public class LoginStatusServlet extends HttpServlet {
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
     JsonObject jsonObject = new JsonObject();
 
     UserService userService = UserServiceFactory.getUserService();

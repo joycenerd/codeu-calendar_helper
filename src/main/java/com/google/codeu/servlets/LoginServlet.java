@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.google.codeu.servlets;
 
 import com.google.appengine.api.users.UserService;
@@ -30,10 +29,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
     UserService userService = UserServiceFactory.getUserService();
 
     // If the user is already logged in, redirect to their page

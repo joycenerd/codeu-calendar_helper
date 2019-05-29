@@ -1,24 +1,25 @@
 // Fetch messages and add them to the page.
-function fetchMessages(){
+function fetchMessages() {
   const url = '/feed';
-  fetch(url).then((response) => {
-      return response.json();
-      }).then((messages) => {
+  fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((messages) => {
         const messageContainer = document.getElementById('message-container');
-        if(messages.length == 0){
-        messageContainer.innerHTML = '<p>There are no posts yet.</p>';
+        if (messages.length == 0) {
+          messageContainer.innerHTML = '<p>There are no posts yet.</p>';
+        } else {
+          messageContainer.innerHTML = '';
         }
-        else{
-        messageContainer.innerHTML = '';  
-        }
-        messages.forEach((message) => {  
-            const messageDiv = buildMessageDiv(message);
-            messageContainer.appendChild(messageDiv);
-            });
+        messages.forEach((message) => {
+          const messageDiv = buildMessageDiv(message);
+          messageContainer.appendChild(messageDiv);
         });
+      });
 }
 
-function buildMessageDiv(message){
+function buildMessageDiv(message) {
   const usernameDiv = document.createElement('div');
   usernameDiv.classList.add('col', 'text-left', 'p-2');
   usernameDiv.appendChild(document.createTextNode(message.user));
@@ -46,13 +47,14 @@ function buildMessageDiv(message){
   messageInnerDiv.appendChild(bodyDiv);
 
   const messageDiv = document.createElement('div');
-  messageDiv.classList.add("row", "border-0", "rounded", "shadow", "mb-3", "bg-light");
+  messageDiv.classList.add(
+      'row', 'border-0', 'rounded', 'shadow', 'mb-3', 'bg-light');
   messageDiv.appendChild(messageInnerDiv);
 
   return messageDiv;
 }
 
 // Fetch data and populate the UI of the page.
-function buildUI(){
+function buildUI() {
   fetchMessages();
 }
