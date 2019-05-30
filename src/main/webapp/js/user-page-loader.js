@@ -69,17 +69,19 @@ function fetchMessages() {
       });
 }
 
-function fetchAboutMe(){
-  const url='/about?user='+parameterUsername;
-  fetch(url).then(response =>{
-    return response.text();
-  }).then(aboutMe =>{
-    const aboutMeContainer=document.getElementById('about-me-container');
-    if(aboutMe==''){
-      aboutme='This user has not entered any information yet.';
-    }
-    aboutMeContainer.innerHTML=aboutMe;
-  });
+function fetchAboutMe() {
+  const url = '/about?user=' + parameterUsername;
+  fetch(url)
+      .then(response => {
+        return response.text();
+      })
+      .then(aboutMe => {
+        const aboutMeContainer = document.getElementById('about-me-container');
+        if (aboutMe == '') {
+          aboutme = 'This user has not entered any information yet.';
+        }
+        aboutMeContainer.innerHTML = aboutMe;
+      });
 }
 
 /**
