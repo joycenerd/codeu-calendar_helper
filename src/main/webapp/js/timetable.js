@@ -7,7 +7,7 @@
  * the authorized user's calendar. If no events are found an
  * appropriate message is printed.
  */
-function FetchInstance(){
+function fetchInstance(){
   gapi.client.calendar.events.list({
     'calendarId': 'primary',
     'timeMin': (new Date()).toISOString(),
@@ -46,3 +46,8 @@ function appendPre(message) {
   pre.appendChild(textContent);
 }
 
+
+function undoFetch(){
+  var pre = document.getElementById('content');
+  pre.innerHTML = '';
+}

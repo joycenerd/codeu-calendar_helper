@@ -10,7 +10,8 @@
     <button id="authorize_button" style="display: none;">Authorize</button>
     <button id="signout_button" style="display: none;">Sign Out</button>
 
-   **After authorized (only), FetchInstance will be called. You should implement it in another script (file).
+   **After authorized (only), fetchInstance will be called. You should implement it in another script (file).
+   **After signout (only), undoFetch will be called.
 
    **Individual use this login/logout should overwrite API_KEY and SCOPES to fit their own needs.
  */
@@ -68,10 +69,12 @@ function updateSigninStatus(isSignedIn) {
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
 
-    FetchInstance();
+    fetchInstance();
   } else {
     authorizeButton.style.display = 'block';
     signoutButton.style.display = 'none';
+
+    undoFetch();
   }
 }
 
