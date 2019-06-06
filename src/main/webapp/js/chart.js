@@ -2,30 +2,33 @@ function drawBarChart(){
   google.charts.load('current', {packages: ['corechart']});
   google.charts.setOnLoadCallback(drawChart);
   function drawChart(){
-    var book_data = new google.visualization.DataTable();
-    //define columns for the DataTable instance
-    book_data.addColumn('string', 'Book Title');
-    book_data.addColumn('number', 'Votes');
+    fetch("/bookchart")
+      .then((response) => {
+        return response.json();
+        })
+      .then((bookJson) => {
+        var book_data = new google.visualization.DataTable();
+        //define columns for the DataTable instance
+        book_data.addColumn('string', 'Book Title');
+        book_data.addColumn('number', 'Rating');
 
-    //add data to book_data
-    book_data.addRows([
-        ["The Best We Could Do", 6],
-        ["Sing, Unburied, Sing", 10],
-        ["The Book of Unknown Americans", 7],
-        ["The 57 Bus", 4],
-        ["The Handmaid's Tale", 8]
-    ]);
+        for (i = 0; i < bookJson.length; i++) {
+          bookRow = [];
+          var title = bookJson[i].title;
+          var ratings = bookJson[i].rating;
+          bookRow.push(title, ratings);
 
-    var chart_options = {
-      title: "Missing Book Names",
-      width: 800,
-      height: 400,
-      fontSize: 11
-    };
-
-    var chart = new google.visualization.BarChart(document.getElementById('book_chart'));
-
-    chart.draw(book_data);
+          book_data.addRow(bookRow);
+        }
+        var chart_options = {
+          title: "Missing Book Names",
+          width: 800,
+          height: 400,
+          fontSize: 11
+        };
+        var chart = new google.visualization.BarChart(document.getElementById('book_chart'));
+        chart.draw(book_data);
+        });
   }
 }
 
