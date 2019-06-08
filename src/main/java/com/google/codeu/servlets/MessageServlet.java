@@ -15,7 +15,6 @@
  */
 
 package com.google.codeu.servlets;
-
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.codeu.data.Datastore;
@@ -29,7 +28,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
-
+import java.net.URL;
+import java.util.regex.Matcher; // video 
+import java.util.regex.Pattern;
+import java.io.FileNotFoundException;// valid
+import java.io.FileReader;
+import javax.script.*;
+import org.apache.commons.validator.routines.UrlValidator;
+import javax.swing.JOptionPane;
 /** Handles fetching and saving {@link Message} instances. */
 @WebServlet("/messages")
 public class MessageServlet extends HttpServlet {
@@ -73,11 +79,61 @@ public class MessageServlet extends HttpServlet {
     }
 
     String user = userService.getCurrentUser().getEmail();
-    String text = Jsoup.clean(request.getParameter("text"), Whitelist.none());
-
-    Message message = new Message(user, text);
+    String userText = Jsoup.clean(request.getParameter("text"), Whitelist.none());
+        
+    String regex = "(https?://\\S+\\.(png|jpg|gif))";
+    String replacement = "<img src=\"$1\" />";
+    String textWithImagesReplaced = userText.replaceAll(regex, replacement);
+    int size = textWithImagesReplaced.length();
+    char[] charArray = textWithImagesReplaced.toCharArray();
+    int count=0;
+    for (int i = 0; i < size; i++) {
+         if(charArray[i]!='<'){
+              count++;
+         }else{
+              break;
+         }
+    }
+     String text ="";
+    if(count == textWithImagesReplaced.length()) text = textWithImagesReplaced;
+    if(count!=0){
+      text = textWithImagesReplaced.substring(0,count);
+    }else{
+      text = textWithImagesReplaced;
+    }
+    System.out.println(textWithImagesReplaced.length()+"leg");
+    System.out.println(count+"count");
+    String img = textWithImagesReplaced.substring(count,textWithImagesReplaced.length());
+    //String youTubeUrlRegEx = "^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))/";
+    System.out.println(text+"textbefore");
+    System.out.println(img+"imagelink");
+    
+    // if input is text  +  invalid_img -> wrong
+    // input is invalid_img ->print the url
+   if(img.length() > 0 ){ // has some img , test it
+        String testlink = img.replace("<img src=", "");
+        String seclink = testlink.replace(" />","");
+        String newlink = seclink.substring(1,seclink.length()-1);
+        if (urlValidator(newlink)) { // right url (with or without text)
+          System.out.println("The url " + newlink + " is valid");
+        }else{ // only invalid url
+          textWithImagesReplaced = "";
+        }
+    }else{
+      textWithImagesReplaced = text;
+      System.out.println("The url is not valid");
+    }
+    
+    Message message = new Message(user, textWithImagesReplaced);
     datastore.storeMessage(message);
-
     response.sendRedirect("/user-page.html?user=" + user);
+
   }
+
+  public boolean urlValidator(String url)
+	{
+		// Get an UrlValidator using default schemes
+		UrlValidator defaultValidator = new UrlValidator();
+		return defaultValidator.isValid(url);
+	}
 }
