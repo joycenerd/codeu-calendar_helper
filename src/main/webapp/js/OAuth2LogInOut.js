@@ -16,20 +16,6 @@
    **Individual use this login/logout should overwrite API_KEY and SCOPES to fit their own needs.
  */
 
-// Client ID and API key from the Developer Console
-var CLIENT_ID = '718605255295-89s3i0q5ciueig9mkait6nsuoktp6cek.apps.googleusercontent.com';
-var API_KEY = 'AIzaSyBXx02QxNkdwbF7jh1mNCVpQgq2zF3OlYg';
-
-// Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
-
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/calendar";
-
-var authorizeButton = document.getElementById('authorize_button');
-var signoutButton = document.getElementById('signout_button');
-
 /**
  *  On load, called to load the auth2 library and API client library.
  */
@@ -42,17 +28,26 @@ function handleClientLoad() {
  *  listeners.
  */
 function initClient() {
+  // Array of API discovery doc URLs for APIs used by the quickstart
+  var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+
+  // Authorization scopes required by the API; multiple scopes can be
+  // included, separated by spaces.
+  var SCOPES = "profile https://www.googleapis.com/auth/calendar";
   gapi.client.init({
-  apiKey: API_KEY,
-  clientId: CLIENT_ID,
-  discoveryDocs: DISCOVERY_DOCS,
-  scope: SCOPES
+    apiKey: 'AIzaSyBXx02QxNkdwbF7jh1mNCVpQgq2zF3OlYg',
+    clientId: '718605255295-89s3i0q5ciueig9mkait6nsuoktp6cek.apps.googleusercontent.com',
+    discoveryDocs: DISCOVERY_DOCS,
+    scope: SCOPES
   }).then(function () {
     // Listen for sign-in state changes.
     gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
 
     // Handle the initial sign-in state.
     updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+
+    var authorizeButton = document.getElementById('authorize_button');
+    var signoutButton = document.getElementById('signout_button');
     authorizeButton.onclick = handleAuthClick;
     signoutButton.onclick = handleSignoutClick;
   }, function(error) {
@@ -65,6 +60,8 @@ function initClient() {
  *  appropriately. After a sign-in, the API is called.
  */
 function updateSigninStatus(isSignedIn) {
+  var authorizeButton = document.getElementById('authorize_button');
+  var signoutButton = document.getElementById('signout_button');
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
