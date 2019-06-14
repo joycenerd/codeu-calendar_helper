@@ -46,7 +46,8 @@ function showMessageFormIfViewingSelf() {
       });
   // show about-me form
   document.getElementById('about-me-form').classList.remove('hidden');
-  ClassicEditor.create( document.getElementById('message-input') );
+  const config = {removePlugins: [ 'Heading', 'List']};
+  ClassicEditor.create( document.getElementById('message-input'),config);
 }
 
 /** Fetches messages and add them to the page. */
