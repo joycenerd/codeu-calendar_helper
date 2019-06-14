@@ -34,6 +34,20 @@ limitations under the License.
     <failOnMissingWebXml>false</failOnMissingWebXml>
   </properties>
 
+  <!-- Google API Client for grouping dependencies and setting version -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>libraries-bom</artifactId>
+        <version>1.2.0</version>
+        <type>pom</type>
+        <scope>import</scope>
+       </dependency>
+     </dependencies>
+  </dependencyManagement>
+  <!-- -->
+
   <dependencies>
 
     <dependency>
@@ -67,6 +81,36 @@ limitations under the License.
         <artifactId>commons-validator</artifactId>
         <version>1.4.0</version>
     </dependency>
+
+    <!-- Google API Client -->
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-appengine</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-jackson2</artifactId>
+    </dependency>
+    <!-- -->
+
+    <dependency>
+      <groupId>com.google.oauth-client</groupId>
+      <artifactId>google-oauth-client-jetty</artifactId>
+      <version>1.23.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.apis</groupId>
+      <artifactId>google-api-services-calendar</artifactId>
+      <version>v3-rev305-1.23.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>
