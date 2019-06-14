@@ -83,7 +83,7 @@ public class LoginServlet extends HttpServlet {
 
     flow = new GoogleAuthorizationCodeFlow.Builder( HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
       .setDataStoreFactory( DATA_STORE_FACTORY )
-      /*
+      /*  this part is dead. I thought it's great to use but didn't solve the error.
       .setCredentialCreatedListener(new AuthorizationCodeFlow.CredentialCreatedListener() {
         @Override
         public void onCredentialCreated(Credential credential, TokenResponse tokenResponse) throws IOException {
@@ -130,7 +130,6 @@ public class LoginServlet extends HttpServlet {
           return;
         }
         QuerySlices slices = new QuerySlices( query );  //Should we check whether the return tokens match the format from document?
-        //Here, should we chatch the error from the method? or would it be thrown..?
         TokenResponse tokenResponse = requestAccessToken( request.getRequestURL().toString(), slices.get("code") );
 
         flow.createAndStoreCredential(tokenResponse, userId);
@@ -158,9 +157,9 @@ public class LoginServlet extends HttpServlet {
     throws IOException, FileNotFoundException{
     LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(-1).build(); //-1 for unused port
     return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY,
-        new AuthorizationCodeInstalledApp(flow, receiver).authorize(userId)
+        new AuthorizationCodeInstalledApp(flow, receiver).authorize(userId) //The problem
         )
-      //.setApplicationName(APPLICATION_NAME)
+      //.setApplicationName(APPLICATION_NAME) //saved until deciding whether it's necessary or ..
       .build();
 
   }
@@ -173,14 +172,12 @@ public class LoginServlet extends HttpServlet {
 
   private TokenResponse requestAccessToken( String RedirectUri, String code ) 
     throws TokenResponseException, IOException{
-//    try {
+    try {
       return flow.newTokenRequest( code )
                 .setRedirectUri( RedirectUri )
                 .execute();
-  //  }
-    /* I think this error should stop this user to login until fixed.
-
-    catch (TokenResponseException e) {
+    }catch (TokenResponseException e) {
+     //I think this error should stop this user to login until fixed.
       if (e.getDetails() != null) {
         System.err.println("Error: " + e.getDetails().getError());
         if (e.getDetails().getErrorDescription() != null) {
@@ -194,6 +191,5 @@ public class LoginServlet extends HttpServlet {
       }
     }
     return null;
-    */
   }
 }
