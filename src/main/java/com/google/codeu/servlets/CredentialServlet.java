@@ -31,10 +31,6 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 
-/*
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-*/
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.GenericUrl;
@@ -60,68 +56,68 @@ import com.google.api.services.calendar.Calendar;
 /**
  * Redirects the user to the Google login page or their page if they're already logged in.
  */
-@WebServlet("/login")
-public class LoginServlet extends HttpServlet {
+@WebServlet("/credential")
+public class CredentialServlet extends HttpServlet {
 
   private static final String CREDENTIALS_FILE_PATH = "/client_secret_Calendar_Events.json";
-  private static final AppEngineDataStoreFactory DATA_STORE_FACTORY = AppEngineDataStoreFactory.getDefaultInstance();//Not sure about whether it's global version.
   private static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance(); //JsonFactory is an abstract class, so here needs a subclass for it.
+  private static final AppEngineDataStoreFactory DATA_STORE_FACTORY = AppEngineDataStoreFactory.getDefaultInstance(); //To maintain data manually, specificly for tokens.
 
-  //The flow is the overall class for google authorization classes and methods.
+  /*
+     The flow is the overall class for google authorization classes and methods.
+  */
   private static GoogleAuthorizationCodeFlow flow = null; 
 
+  /*
+     To initialize flow, GoogleAuthorizationCodeFlow.
+  */
   static{
     List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     // Load client secrets.
     InputStream in = LoginServlet.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-    //GoogleCredential credential = GoogleCredential.fromStream(in).createScoped(SCOPES); //for service account with service account keys
     if (in == null) {
-      //throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
-      System.err.println( "Resource not found: " + CREDENTIALS_FILE_PATH );
-      System.exit(-1);
+      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
     }
     try{
-      GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in)); //for oauth2 with client id file
+      //GoogleCredential credential = GoogleCredential.fromStream(in).createScoped(SCOPES); //for service account with service account keys
+      GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in)); //for oauth2 to get clients' id/file
 
       flow = new GoogleAuthorizationCodeFlow.Builder( HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
         .setDataStoreFactory( DATA_STORE_FACTORY )
         .setCredentialCreatedListener(new GoogleAuthorizationCodeFlow.CredentialCreatedListener() {
           @Override
           public void onCredentialCreated(Credential credential, TokenResponse tokenResponse) throws IOException {
-          System.out.println("OnCreated: refresh_token = " + tokenResponse.getRefreshToken() );
-            if( tokenResponse.getRefreshToken() == null ){
-              System.err.println( "tokenResponse is null");
-              return;
-            }
             UserService userService = UserServiceFactory.getUserService();
             String userId = userService.getCurrentUser().getUserId();
+            System.out.println("User "+ userId +": OnCredentialCreated" );
+            if( tokenResponse.getRefreshToken() == null ){
+              System.err.println( "OnCredentialCreated: tokenResponse is null");
+              return;
+            }
+            /*  To maintain the tokens in DATA_STORE_FACTORY. The reason to keep this part is for being as reference once we needed it.
             DATA_STORE_FACTORY.getDataStore("user").set(userId+"_token", tokenResponse.getRefreshToken());
+            */
           }
         }).addRefreshListener(new CredentialRefreshListener() {
           @Override
           public void onTokenResponse(Credential credential, TokenResponse tokenResponse) throws IOException {
-          System.out.println("OnRefreshed: refresh_token = " + tokenResponse );
-          System.out.println( "Credential from flow:\n\tRefreshToken = " + credential.getRefreshToken()
-              + "\n\tExpireTime = " + credential.getExpirationTimeMilliseconds());
-            if( tokenResponse.getRefreshToken() == null ){
-              System.err.println( "tokenResponse is null");
-              return;
-            }
             UserService userService = UserServiceFactory.getUserService();
             String userId = userService.getCurrentUser().getUserId();
-            DATA_STORE_FACTORY.getDataStore("user").set(userId+"_token", tokenResponse.getRefreshToken());
+            System.out.println("User "+ userId +": OnCredentialCreated" );
+            if( tokenResponse.getRefreshToken() == null ){
+              System.err.println( "OnCredentialCreated: tokenResponse is null");
+              return;
+            }
           }
 
           @Override
           public void onTokenErrorResponse(Credential credential, TokenErrorResponse tokenErrorResponse) throws IOException {
-            System.err.println("OAuth2 Token Error" + tokenErrorResponse );
-            UserService userService = UserServiceFactory.getUserService();
-            String userId = userService.getCurrentUser().getUserId();
-            DATA_STORE_FACTORY.getDataStore("user").delete(userId+"_token");
+            System.err.println("OAuth2 Token Error:" + tokenErrorResponse );
           }
-        }).setAccessType("offline").build();
+        }).setAccessType("offline") //set offline for refresh token
+        .build();
     }catch(IOException e){
     }
 
@@ -132,40 +128,52 @@ public class LoginServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
 
     // If the user is already logged in, redirect to their page
-    if (userService.isUserLoggedIn()) {
-      String user = userService.getCurrentUser().getEmail();
-      String userId = userService.getCurrentUser().getUserId();
-
-
-      // If the user has already authorized, redirect to their page
-      if( isAuthorized(userId) == false ){
-        /*
-           The Authorization method will redirect to this page with GET query string
-           If this user has authorized but not been recorded, it will direct to get the access code.
-           */
-        String query = request.getQueryString();
-        if(query == null){
-          String OAuth2Url = flow.newAuthorizationUrl()
-                                .setRedirectUri(request.getRequestURL().toString())
-                                .build(); //build for string. otherwise, it'd just be object.
-          response.sendRedirect(OAuth2Url);
-          return;
-        }
-        QuerySlices slices = new QuerySlices( query );  //Should we check whether the return tokens match the format from document?
-        TokenResponse tokenResponse = requestAccessToken( request.getRequestURL().toString(), slices.get("code") );
-
-        flow.createAndStoreCredential(tokenResponse, userId);
-      }
-      
-      //When using response.sendRedirect, saving(?) somethings like response.getOutputStream().println(json) will make a bug like it has been committed.
-      response.sendRedirect("/user-page.html?user=" + user);  
-      return;
+    if (userService.isUserLoggedIn() == false) {
+      response.sendRedirect( "/login" );
+      return; //return for preventing redirecting again or conduct the code below
     }
 
-    // Redirect to Google login page. That page will then redirect back to /login,
-    // which will be handled by the above if statement.
-    String googleLoginUrl = userService.createLoginURL("/login");
-    response.sendRedirect(googleLoginUrl);
+    String userId = userService.getCurrentUser().getUserId(); //unique
+    /*
+      Record the previous url
+    */
+    if(DATA_STORE_FACTORY.getDataStore(userId).get("referer") == null ){
+      DATA_STORE_FACTORY.getDataStore(userId).set("referer", request.getHeader("referer"));
+      System.out.println("First enter Credential with referer = " + request.getHeader("referer"));
+    }
+
+    // If the user has already authorized, redirect to their page
+    if( isAuthorized(userId) == false ){
+      /*
+         The Authorization method will redirect to this page with GET query string
+         If this user has authorized but not been recorded, it will direct to get the access code.
+       */
+      String query = request.getQueryString();
+      if(query == null){
+        String OAuth2Url = flow.newAuthorizationUrl()
+          .setRedirectUri(request.getRequestURL().toString())
+          .build(); //build for string. otherwise, it'd just be object.
+        response.sendRedirect(OAuth2Url);
+        return;
+      }
+
+      /*
+        Through GET query string to get the Authorization code for attaining tokens.
+        Question/Concern: Should we check whether the return tokens match the format from document?
+                          And check whether this token is valid.
+      */
+      QuerySlices slices = new QuerySlices( query );
+      TokenResponse tokenResponse = requestAccessToken( request.getRequestURL().toString(), slices.get("code") );
+
+      // Restore the token including of refresh token for further use and isAuthorized check.
+      flow.createAndStoreCredential(tokenResponse, userId);
+    }
+
+    // When using response.sendRedirect, saving(?) somethings like response.getOutputStream().println(json) will make a bug like it has been committed.
+    String referURL = DATA_STORE_FACTORY.getDataStore(userId).get("referer");
+    DATA_STORE_FACTORY.getDataStore(userId).set("referer", null);
+    System.out.println("Leaving from Credential to referer = " + referURL);
+    response.sendRedirect(referURL);  
   }
 
   /*

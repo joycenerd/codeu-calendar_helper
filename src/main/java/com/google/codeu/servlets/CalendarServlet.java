@@ -13,6 +13,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
@@ -33,12 +34,6 @@ public class CalendarServlet extends HttpServlet {
   private LoginServlet Login = null;
   private String userId = null;
 
-  public CalendarServlet() throws IOException, FileNotFoundException{
-    Login = new LoginServlet();
-    userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
-    service = Login.getCalendar(userId);
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, FileNotFoundException{
@@ -47,10 +42,15 @@ public class CalendarServlet extends HttpServlet {
       return;
     }
 
-    if( Login.isAuthorized(userId) == false){
+    Login = new LoginServlet();
+    userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+
+    if( userId != null && Login.isAuthorized(userId) == false){
       response.sendRedirect("/login");
       return;
     }
+
+    service = Login.getCalendar(userId);
 
     //List<Event> items = null;
     // Build a new authorized API client service.
@@ -58,13 +58,19 @@ public class CalendarServlet extends HttpServlet {
     // List the next 10 events from the primary calendar.
     DateTime now = new DateTime(System.currentTimeMillis());
     if(service == null) System.out.println("angry bird");
-    Events events = service.events().list("primary")
-        .setMaxResults(10)
-        .setTimeMin(now)
-        .setOrderBy("startTime")
-        .setSingleEvents(true)
-        .execute();
-      //items = events.getItems();
+    Events events;
+    try{
+      events = service.events().list("primary")
+          .setMaxResults(10)
+          .setTimeMin(now)
+          .setOrderBy("startTime")
+          .setSingleEvents(true)
+          .execute();
+        //items = events.getItems();
+    }catch( GoogleJsonResponseException e ){
+      System.err.println( "Calendar request fail:" + e );
+      return;
+    }
 
     response.setContentType("application/json");
 
