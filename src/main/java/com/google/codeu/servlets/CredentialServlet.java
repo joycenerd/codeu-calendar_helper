@@ -76,9 +76,10 @@ public class CredentialServlet extends HttpServlet {
     List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     // Load client secrets.
-    InputStream in = LoginServlet.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+    InputStream in = CredentialServlet.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
     if (in == null) {
-      throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+      //throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+      System.err.println("Resource not found: " + CREDENTIALS_FILE_PATH);
     }
     try{
       //GoogleCredential credential = GoogleCredential.fromStream(in).createScoped(SCOPES); //for service account with service account keys
@@ -93,7 +94,7 @@ public class CredentialServlet extends HttpServlet {
             String userId = userService.getCurrentUser().getUserId();
             System.out.println("User "+ userId +": OnCredentialCreated" );
             if( tokenResponse.getRefreshToken() == null ){
-              System.err.println( "OnCredentialCreated: tokenResponse is null");
+              System.err.println( "OnCredentialCreated: refreshToken is null");
               return;
             }
             /*  To maintain the tokens in DATA_STORE_FACTORY. The reason to keep this part is for being as reference once we needed it.
@@ -105,9 +106,9 @@ public class CredentialServlet extends HttpServlet {
           public void onTokenResponse(Credential credential, TokenResponse tokenResponse) throws IOException {
             UserService userService = UserServiceFactory.getUserService();
             String userId = userService.getCurrentUser().getUserId();
-            System.out.println("User "+ userId +": OnCredentialCreated" );
+            System.out.println("User "+ userId +": OnTokenRefreshed" );
             if( tokenResponse.getRefreshToken() == null ){
-              System.err.println( "OnCredentialCreated: tokenResponse is null");
+              System.err.println( "OnTokenRefreshed: refreshToken is null");
               return;
             }
           }
@@ -137,10 +138,12 @@ public class CredentialServlet extends HttpServlet {
     /*
       Record the previous url
     */
+    /*
     if(DATA_STORE_FACTORY.getDataStore(userId).get("referer") == null ){
       DATA_STORE_FACTORY.getDataStore(userId).set("referer", request.getHeader("referer"));
       System.out.println("First enter Credential with referer = " + request.getHeader("referer"));
     }
+    */
 
     // If the user has already authorized, redirect to their page
     if( isAuthorized(userId) == false ){
@@ -170,10 +173,13 @@ public class CredentialServlet extends HttpServlet {
     }
 
     // When using response.sendRedirect, saving(?) somethings like response.getOutputStream().println(json) will make a bug like it has been committed.
+    /*
     String referURL = DATA_STORE_FACTORY.getDataStore(userId).get("referer");
     DATA_STORE_FACTORY.getDataStore(userId).set("referer", null);
     System.out.println("Leaving from Credential to referer = " + referURL);
     response.sendRedirect(referURL);  
+    */
+    response.sendRedirect("/index.html");  
   }
 
   /*

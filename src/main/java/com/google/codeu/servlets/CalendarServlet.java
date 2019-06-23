@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.codeu.servlets.LoginServlet;
+import com.google.codeu.servlets.CredentialServlet;
 
 @WebServlet("/calendar")
 public class CalendarServlet extends HttpServlet {
@@ -31,7 +31,7 @@ public class CalendarServlet extends HttpServlet {
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
   private Calendar service = null;
-  private LoginServlet Login = null;
+  private CredentialServlet credentialServlet = new CredentialServlet();
   private String userId = null;
 
   @Override
@@ -42,15 +42,19 @@ public class CalendarServlet extends HttpServlet {
       return;
     }
 
-    Login = new LoginServlet();
     userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
 
-    if( userId != null && Login.isAuthorized(userId) == false){
+    if( userId == null ){
       response.sendRedirect("/login");
       return;
     }
 
-    service = Login.getCalendar(userId);
+    if( credentialServlet.isAuthorized(userId) == false){
+      response.sendRedirect("/credential");
+      return;
+    }
+
+    service = credentialServlet.getCalendar(userId);
 
     //List<Event> items = null;
     // Build a new authorized API client service.
