@@ -46,6 +46,8 @@ function showMessageFormIfViewingSelf() {
       });
   // show about-me form
   document.getElementById('about-me-form').classList.remove('hidden');
+  const config = {removePlugins: [ 'Heading', 'List']};
+  ClassicEditor.create( document.getElementById('message-input'),config);
 }
 
 /** Fetches messages and add them to the page. */
@@ -71,6 +73,7 @@ function fetchMessages() {
 
 function fetchAboutMe() {
   const url = '/about?user=' + parameterUsername;
+  ClassicEditor.create( document.getElementById('about-me-input') );
   fetch(url)
       .then(response => {
         return response.text();
