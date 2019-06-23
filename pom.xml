@@ -32,6 +32,10 @@ limitations under the License.
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <failOnMissingWebXml>false</failOnMissingWebXml>
+   
+    <exec.mainClass>io.happycoding.naturallanguage.NaturalLanguageHelloWorld</exec.mainClass>
+    <exec.cleanupDaemonThreads>false</exec.cleanupDaemonThreads>
+
   </properties>
 
   <dependencies>
@@ -67,7 +71,16 @@ limitations under the License.
         <artifactId>commons-validator</artifactId>
         <version>1.4.0</version>
     </dependency>
+
+    <!-- Cloud Natural Language API Java library -->
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-language</artifactId>
+      <version>1.55.0</version>
+    </dependency>
+    
   </dependencies>
+
 
   <build>
     <plugins>
