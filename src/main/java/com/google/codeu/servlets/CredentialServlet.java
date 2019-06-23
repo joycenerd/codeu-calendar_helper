@@ -12,10 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Usage:
+ *   - Forward to this page with parameters plus an attribute called "from",
+ *      which should contain the URL one is in. Then this page will get the
+ *      refresh token, and then redirect to the original page.
+ *   - Future features: Less isAuthorized and logs. One will only call one
+ *      function to do the above thing.
  */
 
 package com.google.codeu.servlets;
-import com.google.codeu.utils.QuerySlices;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -28,35 +34,33 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.auth.oauth2.BearerToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.extensions.appengine.datastore.AppEngineDataStoreFactory;
 import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.auth.oauth2.TokenErrorResponse;
 import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.google.api.client.auth.oauth2.CredentialRefreshListener;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.util.Clock;
-
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-
 
 import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.CalendarScopes;
+
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+
 
 /**
  * Redirects the user to the Google login page or their page if they're already logged in.
  */
-@WebServlet("/credential")
+//@WebServlet( urlPatterns = {"/OAuth2", "/refreshToken"}, displayName = "Connecting to Google API...")
+@WebServlet( "/credential" )
 public class CredentialServlet extends HttpServlet {
 
   private static final String CREDENTIALS_FILE_PATH = "/client_secret_Calendar_Events.json";
@@ -113,6 +117,9 @@ public class CredentialServlet extends HttpServlet {
             }
           }
 
+          /*
+              This error usually causes by changed or deleted authorization.
+           */
           @Override
           public void onTokenErrorResponse(Credential credential, TokenErrorResponse tokenErrorResponse) throws IOException {
             System.err.println("OAuth2 Token Error:" + tokenErrorResponse );
@@ -137,13 +144,18 @@ public class CredentialServlet extends HttpServlet {
     String userId = userService.getCurrentUser().getUserId(); //unique
     /*
       Record the previous url
+      //parameters are the GET variables, while attributes are variables sent by server-side. Objects are fine as attribute.
     */
-    /*
-    if(DATA_STORE_FACTORY.getDataStore(userId).get("referer") == null ){
-      DATA_STORE_FACTORY.getDataStore(userId).set("referer", request.getHeader("referer"));
-      System.out.println("First enter Credential with referer = " + request.getHeader("referer"));
+    if(DATA_STORE_FACTORY.getDataStore("OAuth2Referer").get(userId) == null ){
+      StringBuilder refererURL = new StringBuilder( (String) request.getAttribute("from") );
+      String query = request.getQueryString();
+      if (query != null && request.getParameter("code") == null ) {
+        refererURL.append('?').append(query);
+      }
+
+      DATA_STORE_FACTORY.getDataStore("OAuth2Referer").set(userId, refererURL.toString());
+      System.out.println( "First entered Credential from: " +  refererURL.toString());
     }
-    */
 
     // If the user has already authorized, redirect to their page
     if( isAuthorized(userId) == false ){
@@ -151,8 +163,7 @@ public class CredentialServlet extends HttpServlet {
          The Authorization method will redirect to this page with GET query string
          If this user has authorized but not been recorded, it will direct to get the access code.
        */
-      String query = request.getQueryString();
-      if(query == null){
+      if( request.getParameter("code") == null ){
         String OAuth2Url = flow.newAuthorizationUrl()
           .setRedirectUri(request.getRequestURL().toString())
           .build(); //build for string. otherwise, it'd just be object.
@@ -165,21 +176,17 @@ public class CredentialServlet extends HttpServlet {
         Question/Concern: Should we check whether the return tokens match the format from document?
                           And check whether this token is valid.
       */
-      QuerySlices slices = new QuerySlices( query );
-      TokenResponse tokenResponse = requestAccessToken( request.getRequestURL().toString(), slices.get("code") );
+      TokenResponse tokenResponse = requestAccessToken( request.getRequestURL().toString(), request.getParameter("code") );
 
       // Restore the token including of refresh token for further use and isAuthorized check.
       flow.createAndStoreCredential(tokenResponse, userId);
     }
 
     // When using response.sendRedirect, saving(?) somethings like response.getOutputStream().println(json) will make a bug like it has been committed.
-    /*
-    String referURL = DATA_STORE_FACTORY.getDataStore(userId).get("referer");
-    DATA_STORE_FACTORY.getDataStore(userId).set("referer", null);
-    System.out.println("Leaving from Credential to referer = " + referURL);
-    response.sendRedirect(referURL);  
-    */
-    response.sendRedirect("/index.html");  
+    Serializable refererURL = DATA_STORE_FACTORY.getDataStore("OAuth2Referer").get(userId);
+    DATA_STORE_FACTORY.getDataStore("OAuth2Referer").delete(userId);
+    System.out.println("Leaving from Credential to referer = " + refererURL);
+    response.sendRedirect(refererURL.toString());  
   }
 
   /*
@@ -190,7 +197,13 @@ public class CredentialServlet extends HttpServlet {
     if(userId == null) return false;
     Credential credential = flow.loadCredential(userId);
     if( credential == null ) return false;  //Authorized?
-    if( credential.refreshToken() == false ) return false;  //Correctly authorized?
+    try{
+      if( credential.refreshToken() == false ) return false;  //Correctly authorized?
+    }catch( TokenResponseException e ){
+      //System.err.println( "refreshToken got TokenResponseException: " + e );
+      //This would invoke onTokenErrorResponse, which would also log down the error
+      return false;
+    }
     return true;
   }
 

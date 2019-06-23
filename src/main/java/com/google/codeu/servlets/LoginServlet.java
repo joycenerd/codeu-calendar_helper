@@ -15,7 +15,6 @@
  */
 
 package com.google.codeu.servlets;
-import com.google.codeu.utils.QuerySlices;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -26,36 +25,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Collections;
-import java.util.List;
-
-/*
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-*/
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.auth.oauth2.BearerToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.extensions.appengine.datastore.AppEngineDataStoreFactory;
-import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.client.auth.oauth2.TokenResponse;
-import com.google.api.client.auth.oauth2.TokenErrorResponse;
-import com.google.api.client.auth.oauth2.TokenResponseException;
-import com.google.api.client.auth.oauth2.CredentialRefreshListener;
-import com.google.api.client.auth.oauth2.Credential;
-
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-
 import com.google.api.services.calendar.Calendar;
 
 import com.google.codeu.servlets.CredentialServlet;
+import javax.servlet.RequestDispatcher;
 /**
  * Redirects the user to the Google login page or their page if they're already logged in.
  */
@@ -74,8 +47,14 @@ public class LoginServlet extends HttpServlet {
 
       // If the user has already authorized, redirect to their page
       if( credentialServlet.isAuthorized(userId) == false ){
-        response.sendRedirect("/credential");  
-        return;
+        try{
+          RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/credential");
+          request.setAttribute("from", "/login");
+          dispatcher.forward(request, response);
+          return;
+        }catch(javax.servlet.ServletException e){
+          System.err.println( "Login forward failed: " + e);
+        }
       }
       
       response.sendRedirect("/user-page.html?user=" + user);  

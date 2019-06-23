@@ -1,5 +1,7 @@
 /*
- This code slice the GET query string and store them as dicstionary for further use - by method, get(String)
+   **This should be replaced by request.getParameter(String)**
+ 
+   This code slice the GET query string and store them as dicstionary for further use - by method, get(String)
  */
 package com.google.codeu.utils;
 
