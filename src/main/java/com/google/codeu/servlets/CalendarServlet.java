@@ -75,6 +75,7 @@ public class CalendarServlet extends HttpServlet {
         return;
       }catch(javax.servlet.ServletException e){
         System.err.println( "Calendar forward failed: " + e);
+        return;
       }
     }
 
@@ -85,7 +86,10 @@ public class CalendarServlet extends HttpServlet {
 
     // List the next 10 events from the primary calendar.
     DateTime now = new DateTime(System.currentTimeMillis());
-    if(service == null) System.out.println("angry bird");
+    if(service == null){
+      System.err.println("Calendar Service is null");
+      return;
+    }
     Events events;
     try{
       events = service.events().list("primary")

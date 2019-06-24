@@ -37,6 +37,8 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.extensions.appengine.datastore.AppEngineDataStoreFactory;
@@ -164,10 +166,20 @@ public class CredentialServlet extends HttpServlet {
          If this user has authorized but not been recorded, it will direct to get the access code.
        */
       if( request.getParameter("code") == null ){
+        String state = new BigInteger(130, new SecureRandom()).toString(32);
+        request.getSession().setAttribute("OAuthState", state);
         String OAuth2Url = flow.newAuthorizationUrl()
           .setRedirectUri(request.getRequestURL().toString())
+          .setState( state ) //against cross-site request forgery
           .build(); //build for string. otherwise, it'd just be object.
         response.sendRedirect(OAuth2Url);
+        return;
+      }
+
+      String state =  request.getSession().getAttribute("OAuthState").toString();
+      request.getSession().removeAttribute("OAuthState");
+      if( state.equals(request.getParameter("state")) == false ){
+        System.err.println("Got ross-site request forgery in OAuth");
         return;
       }
 
