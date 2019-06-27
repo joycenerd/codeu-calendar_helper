@@ -18,17 +18,23 @@ package com.google.codeu.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.api.services.calendar.Calendar;
+
+import com.google.codeu.servlets.CredentialServlet;
+import javax.servlet.RequestDispatcher;
 /**
  * Redirects the user to the Google login page or their page if they're already logged in.
  */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
@@ -36,7 +42,22 @@ public class LoginServlet extends HttpServlet {
     // If the user is already logged in, redirect to their page
     if (userService.isUserLoggedIn()) {
       String user = userService.getCurrentUser().getEmail();
-      response.sendRedirect("/user-page.html?user=" + user);
+      String userId = userService.getCurrentUser().getUserId();
+      CredentialServlet credentialServlet = new CredentialServlet();
+
+      // If the user has already authorized, redirect to their page
+      if( credentialServlet.isAuthorized(userId) == false ){
+        try{
+          RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/credential");
+          request.setAttribute("from", "/login");
+          dispatcher.forward(request, response);
+          return;
+        }catch(javax.servlet.ServletException e){
+          System.err.println( "Login forward failed: " + e);
+        }
+      }
+      
+      response.sendRedirect("/user-page.html?user=" + user);  
       return;
     }
 
