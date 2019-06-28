@@ -149,14 +149,10 @@ public class CredentialServlet extends HttpServlet {
       //parameters are the GET variables, while attributes are variables sent by server-side. Objects are fine as attribute.
     */
     if(DATA_STORE_FACTORY.getDataStore("OAuth2Referer").get(userId) == null ){
-      StringBuilder refererURL = new StringBuilder( (String) request.getAttribute("from") );
-      String query = request.getQueryString();
-      if (query != null && request.getParameter("code") == null ) {
-        refererURL.append('?').append(query);
-      }
-
-      DATA_STORE_FACTORY.getDataStore("OAuth2Referer").set(userId, refererURL.toString());
-      System.out.println( "First entered Credential from: " +  refererURL.toString());
+      String referer = request.getParameter("referer");
+      if( referer.equals("") ) referer = "/index.html";
+      DATA_STORE_FACTORY.getDataStore("OAuth2Referer").set(userId, referer);
+      System.out.println( "First entered Credential from: " +  referer);
     }
 
     Credential credential = flow.loadCredential(userId);
@@ -204,6 +200,7 @@ public class CredentialServlet extends HttpServlet {
       */
       TokenResponse tokenResponse = requestAccessToken( request.getRequestURL().toString(), request.getParameter("code") );
       if( tokenResponse.getRefreshToken() == null ){
+        DATA_STORE_FACTORY.getDataStore("OAuth2Referer").delete(userId);
         response.sendRedirect("/error/authorization-token-failed.html");  
         return;
       }
