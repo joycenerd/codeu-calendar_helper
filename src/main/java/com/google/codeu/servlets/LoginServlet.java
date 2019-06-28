@@ -43,10 +43,9 @@ public class LoginServlet extends HttpServlet {
     if (userService.isUserLoggedIn()) {
       String user = userService.getCurrentUser().getEmail();
       String userId = userService.getCurrentUser().getUserId();
-      CredentialServlet credentialServlet = new CredentialServlet();
 
-      // If the user has already authorized, redirect to their page
-      if( credentialServlet.isAuthorized(userId) == false ){
+      if( request.getSession().getAttribute("authorized") == null ||
+          !((boolean) request.getSession().getAttribute("authorized")) ){
         try{
           RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/credential");
           request.setAttribute("from", "/login");
@@ -57,6 +56,7 @@ public class LoginServlet extends HttpServlet {
         }
       }
       
+      // If the user has already authorized, redirect to their page
       response.sendRedirect("/user-page.html?user=" + user);  
       return;
     }

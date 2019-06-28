@@ -49,7 +49,6 @@ public class CalendarServlet extends HttpServlet {
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
   private Calendar service = null;
-  private CredentialServlet credentialServlet = new CredentialServlet();
   private String userId = null;
 
   @Override
@@ -67,19 +66,13 @@ public class CalendarServlet extends HttpServlet {
       return;
     }
 
-    if( credentialServlet.isAuthorized(userId) == false){
-      try{
-        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/credential");
-        request.setAttribute("from", "/calendar");
-        dispatcher.forward(request, response);
-        return;
-      }catch(javax.servlet.ServletException e){
-        System.err.println( "Calendar forward failed: " + e);
-        return;
-      }
+    if( request.getSession().getAttribute("authorized") == null ||
+        !((boolean) request.getSession().getAttribute("authorized")) ){
+      forwardToAuth(request, response);
+      return;
     }
 
-    service = credentialServlet.getCalendar(userId);
+    service = CredentialServlet.getCalendar(userId);
 
     //List<Event> items = null;
     // Build a new authorized API client service.
@@ -101,6 +94,7 @@ public class CalendarServlet extends HttpServlet {
         //items = events.getItems();
     }catch( GoogleJsonResponseException e ){
       System.err.println( "Calendar request fail:" + e );
+      forwardToAuth( request, response );
       return;
     }
 
@@ -111,5 +105,19 @@ public class CalendarServlet extends HttpServlet {
 
     response.getOutputStream().println(events.toString());
 
+  }
+
+
+  private void forwardToAuth(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    try{
+      RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/credential");
+      request.setAttribute("from", "/calendar");
+      dispatcher.forward(request, response);
+      return;
+    }catch(javax.servlet.ServletException e){
+      System.err.println( "Calendar forward failed: " + e);
+      response.sendRedirect("/index.html");
+      return;
+    }
   }
 }

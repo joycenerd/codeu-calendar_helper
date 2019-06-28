@@ -78,7 +78,7 @@ public class CredentialServlet extends HttpServlet {
   /*
      To initialize flow, GoogleAuthorizationCodeFlow.
   */
-  static{
+  public CredentialServlet(){
     List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     // Load client secrets.
@@ -159,8 +159,22 @@ public class CredentialServlet extends HttpServlet {
       System.out.println( "First entered Credential from: " +  refererURL.toString());
     }
 
+    Credential credential = flow.loadCredential(userId);
+    boolean authorized = credential != null;
+    if( authorized ){
+      try{
+        if( credential.refreshToken() == false ) authorized = false;  //Correctly authorized?
+      }catch( TokenResponseException e ){
+        //System.err.println( "refreshToken got TokenResponseException: " + e );
+        //This would invoke onTokenErrorResponse, which would also log down the error
+        authorized = false;
+      }
+    }
+
+    request.getSession().setAttribute("authorized", authorized);
+
     // If the user has already authorized, redirect to their page
-    if( isAuthorized(userId) == false ){
+    if( !authorized ){
       /*
          The Authorization method will redirect to this page with GET query string
          If this user has authorized but not been recorded, it will direct to get the access code.
@@ -176,9 +190,9 @@ public class CredentialServlet extends HttpServlet {
         return;
       }
 
-      String state =  request.getSession().getAttribute("OAuthState").toString();
+      Object state =  request.getSession().getAttribute("OAuthState");
       request.getSession().removeAttribute("OAuthState");
-      if( state.equals(request.getParameter("state")) == false ){
+      if( state == null || state.toString().equals(request.getParameter("state")) == false ){
         System.err.println("Got ross-site request forgery in OAuth");
         return;
       }
@@ -189,9 +203,14 @@ public class CredentialServlet extends HttpServlet {
                           And check whether this token is valid.
       */
       TokenResponse tokenResponse = requestAccessToken( request.getRequestURL().toString(), request.getParameter("code") );
+      if( tokenResponse.getRefreshToken() == null ){
+        response.sendRedirect("/error/authorization-token-failed.html");  
+        return;
+      }
 
       // Restore the token including of refresh token for further use and isAuthorized check.
       flow.createAndStoreCredential(tokenResponse, userId);
+      request.getSession().setAttribute("authorized", true);
     }
 
     // When using response.sendRedirect, saving(?) somethings like response.getOutputStream().println(json) will make a bug like it has been committed.
@@ -202,30 +221,11 @@ public class CredentialServlet extends HttpServlet {
   }
 
   /*
-      userId is from userService of Google Account.
-      Check if this user has authorized correctly.
-  */
-  public boolean isAuthorized( String userId ) throws IOException{
-    if(userId == null) return false;
-    Credential credential = flow.loadCredential(userId);
-    if( credential == null ) return false;  //Authorized?
-    try{
-      if( credential.refreshToken() == false ) return false;  //Correctly authorized?
-    }catch( TokenResponseException e ){
-      //System.err.println( "refreshToken got TokenResponseException: " + e );
-      //This would invoke onTokenErrorResponse, which would also log down the error
-      return false;
-    }
-    return true;
-  }
-
-  /*
       Get Calendar for requesting calendar data of the user defined by userId.
    */
-  public Calendar getCalendar( String userId )
+  public static Calendar getCalendar( String userId )
     throws IOException, FileNotFoundException{
       Credential credential = flow.loadCredential(userId);
-      if( isAuthorized( userId ) == false ) return null;
       return new Calendar.Builder(
           HTTP_TRANSPORT, JSON_FACTORY, flow.loadCredential(userId))
         .setApplicationName("CodeU team49")
