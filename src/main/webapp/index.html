@@ -14,32 +14,260 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
+<!--
+Copyright 2019 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
 <!DOCTYPE html>
 <html>
 
 <head>
-  <meta charset="UTF-8">
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
   <title>CodeU 2019 Starter Project</title>
-  <link rel="stylesheet" href="/css/main.css">
+  <!-- STYLESHEET CSS FILES -->
   <script src="/js/navigation-loader.js"></script>
+  <link rel="stylesheet" href="css/landingCss/bootstrap.min.css">
+  <link rel="stylesheet" href="css/landingCss/animate.min.css">
+  <link rel="stylesheet" href="css/landingCss/font-awesome.min.css">
+  <link rel="stylesheet" href="css/landingCss/nivo-lightbox.css">
+  <link rel="stylesheet" href="css/landingCss/nivo_themes/default/default.css">
+  <link rel="stylesheet" href="css/landingCss/templatemo-style.css">
+
 </head>
 
-<body onload="addLoginOrLogoutLinkToNavigation();">
-  <nav>
-    <ul id="navigation">
-      <li><a href="/">Home</a></li>
-      <li><a href="/aboutus.html">About Our Team</a></li>
-      <li><a href="/feed.html">All messages</a></li>
-      <li><a href="/community.html">Community</a></li>
-      <li><a href="/stats.html">Stats</a></li>
-    </ul>
-  </nav>
-  <h1>CodeU Starter Project</h1>
-  <p>This is the CodeU starter project. Click the links above to login and visit your page.
-    You can post messages on your page, and you can visit other user pages if you have
-    their URL.</p>
-  <p>This is your code now! Feel free to make changes, and don't be afraid to get creative!
-    You could start by modifying this page to tell the world more about your team.</p>
+<body onload="addLoginOrLogoutLinkToNavigation();" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+  <!-- preloader section -->
+  <div class="preloader">
+    <div class="sk-spinner sk-spinner-rotating-plane"></div>
+  </div>
+  <!-- home section -->
+  <section id="home">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-sm-12">
+          <h1 class="wow bounceInDown rotate">CodeU</h1>
+          <h2 class="wow bounce">Final Project</h2>
+          <a href="/dashboard.html" class="btn btn-default smoothScroll">GET STARTED</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- navigation section -->
+  <div class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="icon icon-bar"></span>
+          <span class="icon icon-bar"></span> <span class="icon icon-bar"></span> </button>
+        <a href="/" class="navbar-brand">CodeU</a></div>
+      <div class="collapse navbar-collapse">
+        <ul id="navigation" class="nav navbar-nav navbar-right">
+          <li><a href="/" class="smoothScroll">HOME</a></li>
+          <li><a href="/aboutus.html" class="smoothScroll">About Our Team</a></li>
+          <li><a href="/feed.html" class="smoothScroll">All messages</a></li>
+          <li><a href="/dashboard.html" class="smoothScroll">Our product</a></li>
+          <li><a href="/community.html" class="smoothScroll">Community</a></li>
+          <li><a href="/stats.html" class="smoothScroll">Stats</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!-- intro section -->
+  <section id="intro">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-offset-3 col-md-6 col-md-offset-3  col-sm-offset-2 col-sm-8 col-sm-offset-2 title">
+          <h1>CodeU Starter Project</h1>
+          <p>This is the CodeU starter project. Click the links above to login and visit your page.
+            You can post messages on your page, and you can visit other user pages if you have
+            their URL.</p>
+          <p>This is your code now! Feel free to make changes, and don't be afraid to get creative!
+            You could start by modifying this page to tell the world more about your team.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- work section -->
+  <section id="work">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 col-sm-4 title">
+          <h2>Service</h2>
+          <hr>
+          <p>We design this product for .....</p>
+        </div>
+        <div class="col-md-8 col-sm-8">
+          <div class="col-md-6 col-sm-6 bg-black"> <i class="fa fa-mobile"></i>
+            <h3>Mobile UX</h3>
+          </div>
+          <div class="col-md-6 col-sm-6 bg-red"> <i class="fa fa-cloud"></i>
+            <h3>Google Calendar</h3>
+          </div>
+          <div class="col-md-6 col-sm-6 bg-red"> <i class="fa fa-link"></i>
+            <h3>Web Design</h3>
+          </div>
+          <div class="col-md-6 col-sm-6 bg-black"> <i class="fa fa-globe"></i>
+            <h3>User Friendly</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- team section -->
+  <section id="team">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-offset-3 col-md-6 col-md-offset-3  col-sm-offset-2 col-sm-8 col-sm-offset-2 title">
+          <h2>Our team</h2>
+          <h4>More description can be found in <b> About our team </b></h4>
+          <hr>
+          <p>Three young girls want to create something valuable.</p>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-6 wow fadeIn" data-wow-delay="0.9s"><img src="https://cdn.pixabay.com/photo/2016/06/14/09/33/bulldog-1456110_960_720.png"
+            style="height: 520px; width:520px;" class="img-responsive" alt="team img">
+          <div class="team-des">
+            <h4>Mia Li</h4>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-6 wow fadeIn" data-wow-delay="1.3s"><img src="https://cdn.pixabay.com/photo/2016/05/30/13/38/cat-1424748_960_720.png"
+            style="height: 520px; width:520px;" class="img-responsive" alt="team img">
+          <div class="team-des">
+            <h4>Joyce Chin</h4>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-6 wow fadeIn" data-wow-delay="1.6s"><img src="https://cdn.pixabay.com/photo/2012/04/12/21/26/cow-30710_960_720.png"
+            style="height: 520px; width:520px;" class="img-responsive" alt="team img">
+          <div class="team-des">
+            <h4>Joyce Huang</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- portfolio section -->
+  <div id="portfolio">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-offset-3 col-md-6 col-md-offset-3 col-sm-offset-2 col-sm-8 col-sm-offset-2 title">
+          <h2>Portfolio</h2>
+          <hr>
+          <p>Simple APP connected to Google Calendar , with more great functions.</p>
+        </div>
+        <div class="col-md-12 col-sm-12"></div>
+        <div class="col-md-3 col-sm-3 wow fadeIn" data-wow-delay="0.6s"><a href="https://cdn.pixabay.com/photo/2018/03/11/09/08/stopwatch-3216241_960_720.png"
+            data-lightbox-gallery="portfolio-gallery"><img style="height: 240px; width:426px;" src="https://cdn.pixabay.com/photo/2018/03/11/09/08/stopwatch-3216241_960_720.png"
+              alt="portfolio img"></a></div>
+        <div class="col-md-3 col-sm-3 wow fadeIn" data-wow-delay="0.6s"><a href="https://cdn.pixabay.com/photo/2014/04/03/10/08/calendar-309912_960_720.png"
+            data-lightbox-gallery="portfolio-gallery"><img style="height: 240px; width:426px;" src="https://cdn.pixabay.com/photo/2014/04/03/10/08/calendar-309912_960_720.png"
+              alt="portfolio img"></a></div>
+        <div class="col-md-3 col-sm-3 wow fadeIn" data-wow-delay="0.6s"><a href="images/portfolio-img3.jpg"
+            data-lightbox-gallery="portfolio-gallery"><img style="height: 240px; width:426px;" src="images/portfolio-img3.jpg"
+              alt="portfolio img"></a></div>
+        <div class="col-md-3 col-sm-3 wow fadeIn" data-wow-delay="0.6s"><a href="https://cdn.pixabay.com/photo/2014/07/13/08/30/stress-391654_960_720.jpg"
+            data-lightbox-gallery="portfolio-gallery"><img style="height: 240px; width:426px;" src="https://cdn.pixabay.com/photo/2014/07/13/08/30/stress-391654_960_720.jpg"
+              alt="portfolio img"></a></div>
+        <div class="col-md-3 col-sm-3 wow fadeIn" data-wow-delay="0.6s"><a href="https://cdn.pixabay.com/photo/2017/02/13/05/26/stopwatch-2061848_960_720.jpg"
+            data-lightbox-gallery="portfolio-gallery"><img style="height: 240px; width:426px;" src="https://cdn.pixabay.com/photo/2017/02/13/05/26/stopwatch-2061848_960_720.jpg"
+              alt="portfolio img"></a></div>
+        <div class="col-md-3 col-sm-3 wow fadeIn" data-wow-delay="0.6s"><a href="https://cdn.pixabay.com/photo/2017/03/05/20/09/hurry-2119711_960_720.jpg"
+            data-lightbox-gallery="portfolio-gallery"><img style="height: 240px; width:426px;" src="https://cdn.pixabay.com/photo/2017/03/05/20/09/hurry-2119711_960_720.jpg"
+              alt="portfolio img"></a></div>
+        <div class="col-md-3 col-sm-3 wow fadeIn" data-wow-delay="0.6s"><a href="https://cdn.pixabay.com/photo/2017/10/11/11/43/multi-tasking-2840792_960_720.jpg"
+            data-lightbox-gallery="portfolio-gallery"><img style="height: 240px; width:426px;" src="https://cdn.pixabay.com/photo/2017/10/11/11/43/multi-tasking-2840792_960_720.jpg"
+              alt="portfolio img"></a></div>
+        <div class="col-md-3 col-sm-3 wow fadeIn" data-wow-delay="0.6s"><a href="https://cdn.pixabay.com/photo/2017/07/15/15/48/males-2506813_960_720.jpg"
+            data-lightbox-gallery="portfolio-gallery"><img style="height: 240px; width:426px;" src="https://cdn.pixabay.com/photo/2017/07/15/15/48/males-2506813_960_720.jpg"
+              alt="portfolio img"></a></div>
+      </div>
+    </div>
+  </div>
+  <!-- price section -->
+  <div id="price">
+    <div class="container">
+      <div class="col-md-offset-3 col-md-6 col-md-offset-3  col-sm-offset-2 col-sm-8 col-sm-offset-2 title">
+        <h2>Our Plans</h2>
+        <hr>
+        <p>We created a useful tool to help busy people taking control of time.</p>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="plan wow bounceIn" data-wow-delay="0.3s">
+          <div class="plan_title">
+            <h3>Timetable</h3>
+          </div>
+          <div class="plan_sub_title">
+            <h2>$ 20</h2>
+            <small>Per month</small>
+          </div>
+          <ul>
+            <li>10 EMAIL ACCOUNTS</li>
+            <li>1 GB SPACE</li>
+            <li>20 MORE THEMES</li>
+          </ul>
+          <button class="btn btn-warning"><a href="/dashboard.html">Get started</a></button>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="plan wow bounceIn" data-wow-delay="0.6s">
+          <div class="plan_title">
+            <h3>Today's Tasks</h3>
+          </div>
+          <div class="plan_sub_title">
+            <h2>$ 40</h2>
+            <small>Per month</small>
+          </div>
+          <ul>
+            <li>10 EMAIL ACCOUNTS</li>
+            <li>4 GB SPACE</li>
+            <li>20 MORE THEMES</li>
+          </ul>
+          <button class="btn btn-warning"><a href="/dashboard.html">Get started</a></button>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="plan wow bounceIn" data-wow-delay="0.9s">
+          <div class="plan_title">
+            <h3>Tags</h3>
+          </div>
+          <div class="plan_sub_title">
+            <h2>$ 60</h2>
+            <small>Per month</small>
+          </div>
+          <ul>
+            <li>10 EMAIL ACCOUNTS</li>
+            <li>10 GB SPACE</li>
+            <li>20 MORE THEMES</li>
+          </ul>
+          <button class="btn btn-warning"><a href="/dashboard.html">Get started</a></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT JS FILES -->
+  <script src="js/landingJs/jquery.js"></script>
+  <script src="js/landingJs/bootstrap.min.js"></script>
+  <script src="js/landingJs/nivo-lightbox.min.js"></script>
+  <script src="js/landingJs/smoothscroll.js"></script>
+  <script src="js/landingJs/jquery.sticky.js"></script>
+  <script src="js/landingJs/jquery.parallax.js"></script>
+  <script src="js/landingJs/wow.min.js"></script>
+  <script src="js/landingJs/custom.js"></script>
 </body>
 
 </html>
