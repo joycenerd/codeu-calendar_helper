@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/css/mdb.min.css" rel="stylesheet">
+    <!-- JQuery -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <title>dashboard</title>
+</head>
+
+<body>
+    <div id='cssmenu'>
+        <ul>
+            <li class='active'><a href='#'><span>Home</span></a></li>
+            <li><a href='#'><span>Calendar</span></a></li>
+            <li><a href='#'><span>Time Table</span></a></li>
+            <li><a href='#'><span>Today Tasks</span></a></li>
+            <li class='last'><a href='#'><span>Tag List</span></a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div id="draggable-handle" class="card">
+                    <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">
+                    <div class="card-body">
+                        <h4 class="card-title"><a>Timetable</a></h4>
+                        <p class="card-text">Move mouse over image to drag</p>
+                        <a href="#" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id="draggable-4" class="card">
+                    <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Lightbox/Thumbnail/img%20(147).jpg"
+                        alt="Card image cap">
+                    <div class="card-body">
+                        <h4 class="card-title"><a>Today's Tasks</a></h4>
+                        <p class="card-text">Start event fired <span class="start-event">0</span> times</p>
+                        <hr>
+                        <p class="card-text">Drag event fired <span class="drag-event">0</span> times</p>
+                        <hr>
+                        <p class="card-text">Stop event fired <span class="stop-event">0</span> times</p>
+                    </div>
+                </div>
+            </div>
+            <div id="draggable-1" class="card">
+                <h5 class="card-header primary-color white-text">#Tag</h5>
+                <div class="card-body">
+
+                    <table rules="all" style="background:#fff;">
+                        <tr>
+                            <td style="font-size:14px;">Tag</td>
+                            <td style="font-size:14px;">Task</td>
+                            <td><span style="font:normal 12px agency, arial; color:blue; text-decoration:underline; cursor:pointer;"
+                                    onclick="addMoreRows(this.form);">
+                                    Add More
+                                </span>
+                            </td>
+                        </tr>
+                        <tr id="rowId">
+                            <td><input name="" type="text" value="" size="17%" /></td>
+                            <td><input name="" type="text" value="" /></td>
+                    </table>
+                    <div id="addedRows"></div>
+                    <form id="message-form" action="/messages" method="POST" class="hidden">
+                        Enter a new message:
+                        <br />
+                        <textarea name="text" id="message-input"></textarea>
+                        <br />
+                        <input type="submit" value="Submit">
+                    </form>
+                    </td>
+                    </tr>
+                </div>
+            </div>
+
+            <div id="draggable-2" class="card">
+                <h5 class="card-header deep-orange white-text">#Tag</h5>
+                <div class="card-body">
+                    <p class="card-text">Content</p>
+                </div>
+            </div>
+            <div id="draggable-3" class="card">
+                <h5 class="card-header success-color white-text">#Tag</h5>
+                <div class="card-body">
+                    <p class="card-text">Content</p>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <script src="/js/dashboard.js"></script>
+</body>
+
+</html>
