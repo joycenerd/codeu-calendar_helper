@@ -27,6 +27,7 @@ import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;    //Different from Calendar.Event which is a request
 import com.google.api.services.calendar.model.Events;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -107,10 +108,12 @@ public class CalendarServlet extends HttpServlet {
       Value regulation: only accept plain text. //Would process here, just remind you whether you want to tell the user about it.
       @param from: This POST is from which site. E.g. "/index.html" or "/testabc.html"
       @param summary: Event title/summary.
-      @param startDate: start date  
-      @param startTime: start time  
-      @param endDate: end date
-      @param endTime: end time
+      @param startDateTime: start date time in RFC3339 format
+      //@param startDate: start date  
+      //@param startTime: start time   - null for whole day event 
+      @param endDateTime: end date time in RFC3339 format
+      //@param endDate: end date
+      //@param endTime: end time  - null for whole day event 
       @param tags: Event tags, which will be stored in description as #abc or #[String].
                    Please use comma to seperate.
                    E.g. tags=a,b,c -> it would be processed as "#a #b #c" into description.
@@ -163,26 +166,31 @@ public class CalendarServlet extends HttpServlet {
     StringBuilder description = new StringBuilder( Jsoup.clean( request.getParameter("description"), Whitelist.none()) );
     Arrays.asList(tags).forEach((tag) -> description.append(" #"+tag));
 
-    System.out.println("description = " + description);
+    System.out.println("description = " + description.toString() );
 
-    /*
     Event event = new Event()
                   .setSummary( eventSummary)
                   //.setLocation("800 Howard St., San Francisco, CA 94103")
                   .setDescription( description.toString() );
 
-    DateTime startDateTime = new DateTime("2015-05-28T09:00:00-07:00");
+    String timezone = request.getParameter("timezone");
+    if( timezone == null ) timezone = "";
+    timezone = Jsoup.clean( timezone, Whitelist.none() );
+    DateTime startDateTime = new DateTime( Jsoup.clean( request.getParameter("startDateTime"), Whitelist.none()) );
     EventDateTime start = new EventDateTime()
       .setDateTime(startDateTime)
-      .setTimeZone("America/Los_Angeles");
+      .setTimeZone( null );
+    if( !timezone.equals("") ) start.setTimeZone( timezone );
     event.setStart(start);
 
-    DateTime endDateTime = new DateTime("2015-05-28T17:00:00-07:00");
+    DateTime endDateTime = new DateTime(Jsoup.clean( request.getParameter("endDateTime"), Whitelist.none()));
     EventDateTime end = new EventDateTime()
       .setDateTime(endDateTime)
-      .setTimeZone("America/Los_Angeles");
+      .setTimeZone( null );
+    if( !timezone.equals("") ) start.setTimeZone( timezone );
     event.setEnd(end);
 
+    /*
     String[] recurrence = new String[] {"RRULE:FREQ=DAILY;COUNT=2"};
     event.setRecurrence(Arrays.asList(recurrence));
 
@@ -200,11 +208,10 @@ public class CalendarServlet extends HttpServlet {
       .setUseDefault(false)
       .setOverrides(Arrays.asList(reminderOverrides));
     event.setReminders(reminders);
-
-    String calendarId = "primary";
-    event = service.events().insert(calendarId, event).execute();
-    System.out.printf("Event created: %s\n", event.getHtmlLink());
     */
+
+    event = service.events().insert(calendarID, event).execute();
+    System.out.printf("Event created: %s\n", event.getHtmlLink());
 
   }
 
