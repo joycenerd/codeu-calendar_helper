@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.api.services.calendar.Calendar;
 
 import com.google.codeu.servlets.CredentialServlet;
-import javax.servlet.RequestDispatcher;
 /**
  * Redirects the user to the Google login page or their page if they're already logged in.
  */
@@ -43,20 +42,14 @@ public class LoginServlet extends HttpServlet {
     if (userService.isUserLoggedIn()) {
       String user = userService.getCurrentUser().getEmail();
       String userId = userService.getCurrentUser().getUserId();
-      CredentialServlet credentialServlet = new CredentialServlet();
 
-      // If the user has already authorized, redirect to their page
-      if( credentialServlet.isAuthorized(userId) == false ){
-        try{
-          RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/credential");
-          request.setAttribute("from", "/login");
-          dispatcher.forward(request, response);
-          return;
-        }catch(javax.servlet.ServletException e){
-          System.err.println( "Login forward failed: " + e);
-        }
+      if( request.getSession().getAttribute("authorized") == null ||
+          !((boolean) request.getSession().getAttribute("authorized")) ){
+        response.sendRedirect("/credential?referer=/login");  
+        return;
       }
       
+      // If the user has already authorized, redirect to their page
       response.sendRedirect("/user-page.html?user=" + user);  
       return;
     }
