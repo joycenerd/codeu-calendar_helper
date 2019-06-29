@@ -54,6 +54,24 @@ public class CalendarServlet extends HttpServlet {
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final HttpTransport HTTP_TRANSPORT = new UrlFetchTransport();
 
+  /*
+    Get events of one/all calendar(s) from start time to end time with limited/unlimited maximum number.
+    @param from: This POST is from which site. E.g. "/index.html" or "/testabc.html"
+    @param summary: Event title/summary.
+    @param startDateTime: start date time in RFC3339 format
+    //@param startDate: start date  
+    //@param startTime: start time   - null for whole day event 
+    @param endDateTime: end date time in RFC3339 format
+    //@param endDate: end date
+    //@param endTime: end time  - null for whole day event 
+    @param tags: Event tags, which will be stored in description as #abc or #[String].
+                 Please use comma to seperate.
+                 E.g. tags=a,b,c -> it would be processed as "#a #b #c" into description.
+    
+    optional - 
+    @param calendar:  The name of calendar that user asks for events.
+                      Null stands for all calendars.
+   */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, FileNotFoundException{
@@ -70,6 +88,29 @@ public class CalendarServlet extends HttpServlet {
     Calendar service = getService( request, response,  isGet);
     if( service == null ) return; 
 
+    String calendarID = null;
+    if( request.getParameter("calendar") != null && !request.getParameter("calendar").equals("")){
+      String calendarSummary = Jsoup.clean( request.getParameter("calendar"), Whitelist.none());
+      // Iterate through entries in calendar list for calendarID
+      String pageToken = null;
+      do {
+        try{
+          CalendarList calendarList = service.calendarList().list().setPageToken(pageToken).execute();
+          List<CalendarListEntry> items = calendarList.getItems();
+
+          pageToken = calendarList.getNextPageToken();
+          for (CalendarListEntry calendarListEntry : items) {
+            if( calendarListEntry.getSummary().equals(calendarSummary) ) calendarID = calendarListEntry.getId();
+          }
+        }catch( GoogleJsonResponseException e ){
+          System.err.println("Calendar POST calendarList request fail - " + e);
+          redirectToAuth( request, response );
+          return;
+        }
+      } while (pageToken != null && calendarID == null );
+    }
+
+    System.out.println("calendarID = " + calendarID);
     //List<Event> items = null;
     // Build a new authorized API client service.
 
@@ -124,6 +165,11 @@ public class CalendarServlet extends HttpServlet {
                         Null stands for primary.
       @param description: Event description.
       @param timezone: timezone of this event, default would be the user's time zone
+                       The time zone in which the time is specified. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) For recurring events this field is required and specifies the time zone in which the recurrence is expanded. For single events this field is optional and indicates a custom time zone for the event start/end.
+
+      @return - printed in the site
+        Succeed - an event's details
+        Fail    - **unclear, needs to be found out.
    */
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) 
@@ -137,7 +183,7 @@ public class CalendarServlet extends HttpServlet {
     if( service == null ) return;
 
     String calendarID = null;
-    if(request.getParameter("calendar").equals("")) calendarID = "primary";
+    if( request.getParameter("calendar") == null || request.getParameter("calendar").equals("")) calendarID = "primary";
     else{
       String calendarSummary = Jsoup.clean( request.getParameter("calendar"), Whitelist.none());
       // Iterate through entries in calendar list for calendarID
@@ -211,7 +257,9 @@ public class CalendarServlet extends HttpServlet {
     */
 
     event = service.events().insert(calendarID, event).execute();
-    System.out.printf("Event created: %s\n", event.getHtmlLink());
+    Gson gson = new Gson();
+    String json = gson.toJson( event );
+    response.getOutputStream().println(json);
 
   }
 
