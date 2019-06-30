@@ -17,12 +17,12 @@
 /* Prevent the page from becoming too wide. */
 body {
   max-width: 600px;
-  background-image: url("https://images.unsplash.com/photo-1457735720963-e277a46f2c68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  font-family: 'Playball',
-    cursive;
+  /*background-image: url("https://images.unsplash.com/photo-1457735720963-e277a46f2c68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");*/ 
+  background-image:url(images/texture-purple-paper-scrapbooking_78790-686.jpg);
+}
+
+.about{
+  background: linear-gradient(to right,#f8f8f8,#f8f8f8);
 }
 
 /* Remove bullet points from navigation bar. */
@@ -37,23 +37,42 @@ nav li {
   margin-right: 10px;
 }
 
-.intro {
-  font-size: 20px;
+nav a {
+  font-size: 30px;
+  font-family: 'Muli', sans-serif;
+  color: #606060 !important;
 }
 
-h1 {
-  color: darkorange;
+.intro {
+  width: 750px; /* Take this */
+  height: 1000px;
+  padding: 5px; /* Plus this x2 for left and right */
+  background: linear-gradient(to right,#5e00bb,#5e00bb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  border-radius: 25px;
+}
+
+.texting {
+  font-size: 20px;
+  font-family: 'Josefin Sans', sans-serif;
+  color: #f8f8f8;
+}
+
+.heading {
+  font-family: 'Frijole',cursive;
+  font-size: 64px;
+  color:#606060;
 }
 
 .brand {
   font-family: 'Frijole',
     cursive;
   text-transform: uppercase;
-  color: white;
+  color: #202020;
   font-size: 40px;
   cursor: pointer;
   animation: 4s blur infinite linear;
 }
+
 
 @keyframes blur {
   0% {
@@ -69,7 +88,6 @@ h1 {
     color: rgba(255, 255, 255, 0.4);
     text-shadow: 0 0 10px white;
   }
-
   90% {
     color: rgba(255, 255, 255, 0.6);
     text-shadow: 0 0 30px white;
