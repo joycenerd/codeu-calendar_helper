@@ -11,11 +11,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/css/mdb.min.css" rel="stylesheet">
+    <!-- New font family-->
+    <link href="https://fonts.googleapis.com/css?family=Istok+Web|Muli:700&display=swap" rel="stylesheet">
     <!-- JQuery -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
     <link rel="stylesheet" href="/css/dashboard.css">
     <title>dashboard</title>
 </head>
@@ -34,7 +35,8 @@
         <div class="row">
             <div class="col-md-3">
                 <div id="draggable-handle" class="card">
-                    <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">
+                    <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg"
+                        alt="Card image cap">
                     <div class="card-body">
                         <h4 class="card-title"><a>Timetable</a></h4>
                         <p class="card-text">Move mouse over image to drag</p>
@@ -44,15 +46,17 @@
             </div>
             <div class="col-md-4">
                 <div id="draggable-4" class="card">
-                    <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Lightbox/Thumbnail/img%20(147).jpg"
+                    <img class="card-img-top"
+                        src="https://mdbootstrap.com/img/Photos/Lightbox/Thumbnail/img%20(147).jpg"
                         alt="Card image cap">
-                    <div class="card-body">
-                        <h4 class="card-title"><a>Today's Tasks</a></h4>
-                        <p class="card-text">Start event fired <span class="start-event">0</span> times</p>
-                        <hr>
-                        <p class="card-text">Drag event fired <span class="drag-event">0</span> times</p>
-                        <hr>
-                        <p class="card-text">Stop event fired <span class="stop-event">0</span> times</p>
+                    <div class="card-body" id="today-task">
+                        <h4 class="card-title"></i><a>Today's Tasks</a></h4>
+                        <form id="todo-list">
+                            <div id="add-todo">
+                                <i class="fa fa-plus"></i>
+                                Add an Item
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -64,7 +68,8 @@
                         <tr>
                             <td style="font-size:14px;">Tag</td>
                             <td style="font-size:14px;">Task</td>
-                            <td><span style="font:normal 12px agency, arial; color:blue; text-decoration:underline; cursor:pointer;"
+                            <td><span
+                                    style="font:normal 12px agency, arial; color:blue; text-decoration:underline; cursor:pointer;"
                                     onclick="addMoreRows(this.form);">
                                     Add More
                                 </span>
