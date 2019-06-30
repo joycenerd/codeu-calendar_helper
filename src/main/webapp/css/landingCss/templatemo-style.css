@@ -27,7 +27,7 @@ html, body {
 	src: url(../fonts/ProximaNova-Bold.otf);
 }
 h1, h2, h3, h4, h5, h6 {
-	font-family: 'Muli',"Proxima Bold";
+	font-family: "Proxima Bold";
 	font-weight: bold;
 }
 p {
@@ -120,7 +120,7 @@ transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
 }
 /* home section */
 #home {
-	background: url(images/agenda-calendar-data-1020323.jpg) fixed;
+	background: url('https://cdn.pixabay.com/photo/2018/04/05/06/38/agenda-3291991_960_720.jpg') fixed;
 	background-repeat:no-repeat;
     background-size:cover;
 	color: #000000;
