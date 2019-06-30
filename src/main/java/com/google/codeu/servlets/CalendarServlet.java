@@ -37,6 +37,7 @@ import java.io.FileNotFoundException;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 
@@ -57,28 +58,22 @@ public class CalendarServlet extends HttpServlet {
   /*
     Get events of one/all calendar(s) from start time to end time with limited/unlimited maximum number.
     @param from: This POST is from which site. E.g. "/index.html" or "/testabc.html"
-    @param summary: Event title/summary.
-    @param startDateTime: start date time in RFC3339 format
-    //@param startDate: start date  
-    //@param startTime: start time   - null for whole day event 
-    @param endDateTime: end date time in RFC3339 format
-    //@param endDate: end date
-    //@param endTime: end time  - null for whole day event 
-    @param tags: Event tags, which will be stored in description as #abc or #[String].
-                 Please use comma to seperate.
-                 E.g. tags=a,b,c -> it would be processed as "#a #b #c" into description.
+    //@param tags: The tags stored in the description. E.g. "#abc" or "train"
     
     optional - 
     @param calendar:  The name of calendar that user asks for events.
                       Null stands for all calendars.
+    @param orderBy:   The order of the resulats. Default is stable order.
+                      E.g. "startTime"(only for single events) or "updated"
+    @param maxResults: The number of max results. Default is unlimited.
+    @param timeMin:   The earliest time of return event. Default is from now. Require RFC3339 format.
+    @param timeMax:   The latest time of return event.  Default is unlimited. Require RFC3339 format.
+    @param timezone:  Return events in timezone. Default is where this user is.
+    @param prettyPrint: true/false. Resaults will contain indentataion and line breaks.
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, FileNotFoundException{
-    if (UserServiceFactory.getUserService().isUserLoggedIn() == false){
-      response.sendRedirect("/login");
-      return;
-    }
 
     /*
        When returns null, it means this user hasn't logged in or authorized yet,
@@ -88,59 +83,79 @@ public class CalendarServlet extends HttpServlet {
     Calendar service = getService( request, response,  isGet);
     if( service == null ) return; 
 
-    String calendarID = null;
-    if( request.getParameter("calendar") != null && !request.getParameter("calendar").equals("")){
-      String calendarSummary = Jsoup.clean( request.getParameter("calendar"), Whitelist.none());
-      // Iterate through entries in calendar list for calendarID
-      String pageToken = null;
-      do {
-        try{
-          CalendarList calendarList = service.calendarList().list().setPageToken(pageToken).execute();
-          List<CalendarListEntry> items = calendarList.getItems();
+    List<String> calendarIDs = new ArrayList<>();
+    String calendarSummary = null;
+    if( checkParam(request, "calendar") ) calendarSummary = Jsoup.clean( request.getParameter("calendar"), Whitelist.none());
+    // Iterate through entries in calendar list for calendarID
+    String pageToken = null;
+    do {
+      try{
+        CalendarList calendarList = service.calendarList().list().setPageToken(pageToken).execute();
+        List<CalendarListEntry> items = calendarList.getItems();
 
-          pageToken = calendarList.getNextPageToken();
-          for (CalendarListEntry calendarListEntry : items) {
-            if( calendarListEntry.getSummary().equals(calendarSummary) ) calendarID = calendarListEntry.getId();
+        pageToken = calendarList.getNextPageToken();
+        for (CalendarListEntry calendarListEntry : items) {
+          if( calendarSummary == null ) calendarIDs.add( calendarListEntry.getId() );
+          else if( calendarListEntry.getSummary().equals(calendarSummary) ){
+            calendarIDs.add( calendarListEntry.getId() );
+            pageToken = null;
+            break;
           }
-        }catch( GoogleJsonResponseException e ){
-          System.err.println("Calendar POST calendarList request fail - " + e);
-          redirectToAuth( request, response );
-          return;
         }
-      } while (pageToken != null && calendarID == null );
+      }catch( GoogleJsonResponseException e ){
+        System.err.println("Calendar POST calendarList request fail - " + e);
+        redirectToAuth( request, response );
+        return;
+      }
+    } while (pageToken != null );
+
+    System.out.println("calendarIDs = " + calendarIDs);
+
+    DateTime timeMin = new DateTime(System.currentTimeMillis());
+    if( checkParam(request, "timeMin") ) timeMin = new DateTime( request.getParameter("timeMin") );
+
+    Calendar.Events.List list = service.events().list(calendarIDs.get(0)).setTimeMin(timeMin);
+    if( checkParam(request, "orderBy") ) list.setOrderBy( request.getParameter("orderBy") );
+    if( checkParam(request, "maxResults") ){
+      try{
+        Integer maxResults = Integer.parseInt( request.getParameter("maxResults") );
+        list.setMaxResults( maxResults );
+      }catch(NumberFormatException e){
+        System.err.println("@param maxResults in Calendar doGet(): " + e );
+      }
+    }
+    if( checkParam(request, "timeMax") ) list.setTimeMax( new DateTime( request.getParameter("timeMax") ) );
+    if( checkParam(request, "timezone") ) list.setTimeZone( request.getParameter("timezone") );
+    if( checkParam(request, "prettyPrint") ) list.setPrettyPrint( Boolean.parseBoolean( request.getParameter("prettyPrint")));
+
+    List<Event> eventList = null;
+    for(int i = 0; i < calendarIDs.size(); ++i){
+      list.setCalendarId( calendarIDs.get(i) );
+      try{
+        // Iterate over the events in the specified calendar
+        pageToken = null;
+        do {
+          Events events = list.setPageToken(pageToken).execute();
+          if( eventList == null ) eventList = events.getItems();
+          else eventList.addAll( events.getItems() );
+          List<Event> items = events.getItems();
+          pageToken = events.getNextPageToken();
+        } while (pageToken != null);
+      }catch( GoogleJsonResponseException e ){
+        System.err.println( "Calendar GET request fail:" + e );
+        redirectToAuth( request, response );
+        return;
+      }
     }
 
-    System.out.println("calendarID = " + calendarID);
-    //List<Event> items = null;
-    // Build a new authorized API client service.
 
-    // List the next 10 events from the primary calendar.
-    DateTime now = new DateTime(System.currentTimeMillis());
-    if(service == null){
-      System.err.println("Calendar Service is null");
-      return;
-    }
-    Events events;
-    try{
-      events = service.events().list("primary")
-          .setMaxResults(10)
-          .setTimeMin(now)
-          .setOrderBy("startTime")
-          .setSingleEvents(true)
-          .execute();
-        //items = events.getItems();
-    }catch( GoogleJsonResponseException e ){
-      System.err.println( "Calendar GET request fail:" + e );
-      redirectToAuth( request, response );
-      return;
-    }
+    response.setContentType("application/json; charset=UTF-8");
+    response.setCharacterEncoding("UTF-8");
+    response.getWriter().println(eventList.toString());
 
-    response.setContentType("application/json");
+    //Gson gson = new Gson();
+    //String json = gson.toJson(eventList);
 
-    Gson gson = new Gson();
-    //String json = gson.toJson(items);
-
-    response.getOutputStream().println(events.toString());
 
   }
 
@@ -257,6 +272,7 @@ public class CalendarServlet extends HttpServlet {
     */
 
     event = service.events().insert(calendarID, event).execute();
+    response.setContentType("application/json");
     Gson gson = new Gson();
     String json = gson.toJson( event );
     response.getOutputStream().println(json);
@@ -267,8 +283,8 @@ public class CalendarServlet extends HttpServlet {
     String from = "/calendar";
     StringBuilder refererURL = new StringBuilder( from  );
     String query = request.getQueryString();
-    if (query != null && request.getParameter("code") == null ) {
-      refererURL.append('?').append(query);
+    if (query != null) {
+      refererURL.append('?').append(query.replace("&", "%26")); //Encode the URL
     }
     response.sendRedirect("/credential?referer=" + refererURL );
   }
@@ -295,5 +311,8 @@ public class CalendarServlet extends HttpServlet {
     }
 
     return CredentialServlet.getCalendar(userId);
+  }
+  private boolean checkParam(HttpServletRequest request, String str){
+    return request.getParameter( str ) != null && !request.getParameter( str ).equals("");
   }
 }
