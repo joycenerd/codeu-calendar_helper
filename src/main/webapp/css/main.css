@@ -47,14 +47,14 @@ nav a {
   width: 750px; /* Take this */
   height: 1000px;
   padding: 5px; /* Plus this x2 for left and right */
-  background: linear-gradient(to right,#5e00bb,#5e00bb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right,#4a47d5,#4a47d5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   border-radius: 25px;
 }
 
 .texting {
   font-size: 20px;
   font-family: 'Josefin Sans', sans-serif;
-  color: #f8f8f8;
+  color: #c2d0da;
 }
 
 .heading {

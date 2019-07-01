@@ -163,7 +163,7 @@ h6 {
 }
 
 #home .btn {
-	background: #5e00bb;
+	background:#4a47d5;
 	border-radius: 4px;
 	border: none;
 	color: #ffffff;
@@ -174,7 +174,7 @@ h6 {
 
 #home .btn:hover {
 	background: #fff;
-	color: #5e00bb;
+	color:#4a47d5;
 	transition: all 0.4s ease-in-out;
 }
 
@@ -203,16 +203,16 @@ h6 {
 }
 
 .navbar-default .navbar-nav li a:hover {
-	color: #5e00bb;
+	color: #4a47d5;
 }
 
 .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus {
-	color: #5e00bb;
+	color: #4a47d5;
 	background-color: transparent;
 }
 
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
-	color: #5e00bb;
+	color:#4a47d5;
 	background-color: transparent;
 }
 
@@ -222,7 +222,7 @@ h6 {
 }
 
 .navbar-default .navbar-toggle .icon-bar {
-	background: #5e00bb;
+	background: #4a47d5;
 	border-color: transparent;
 }
 
@@ -231,7 +231,7 @@ h6 {
 }
 
 .smoothScroll:hover {
-	color: #5e00bb;
+	color: #4a47d5;
 }
 
 /* intro section */
