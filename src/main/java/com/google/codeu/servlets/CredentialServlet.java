@@ -149,8 +149,8 @@ public class CredentialServlet extends HttpServlet {
       //parameters are the GET variables, while attributes are variables sent by server-side. Objects are fine as attribute.
     */
     if(DATA_STORE_FACTORY.getDataStore("OAuth2Referer").get(userId) == null ){
-      String referer = request.getParameter("referer");
-      if( referer.equals("") ) referer = "/index.html";
+      String referer = "/index.html";
+      if( request.getParameter("referer") != null && !request.getParameter("referer").equals("") ) referer = request.getParameter("referer");
       DATA_STORE_FACTORY.getDataStore("OAuth2Referer").set(userId, referer);
       System.out.println( "First entered Credential from: " +  referer);
     }
