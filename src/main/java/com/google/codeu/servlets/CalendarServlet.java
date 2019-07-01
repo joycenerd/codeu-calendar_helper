@@ -31,6 +31,7 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.users.UserService;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -291,7 +292,13 @@ public class CalendarServlet extends HttpServlet {
 
   private Calendar getService(HttpServletRequest request, HttpServletResponse response, boolean isGet)
     throws IOException{
-    String userId = UserServiceFactory.getUserService().getCurrentUser().getUserId();
+    UserService userService = UserServiceFactory.getUserService();
+
+    if(!userService.isUserLoggedIn()){
+      response.sendRedirect("/login");
+      return null;
+    }
+    String userId = userService.getCurrentUser().getUserId();
 
     if( userId == null ){
       response.sendRedirect("/login");
