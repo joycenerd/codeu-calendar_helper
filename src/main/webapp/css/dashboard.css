@@ -383,3 +383,8 @@ span[style]{
 .editing.todo-wrap {
   box-shadow: 0 0 400px rgba(0, 0, 0, .8), inset 0 0px 0 2px #ebebeb;
 }
+
+.ui-state-dragging {
+  height: 36px;
+  line-height:18px;
+}
