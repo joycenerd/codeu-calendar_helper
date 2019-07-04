@@ -105,7 +105,10 @@ public class CalendarServlet extends HttpServlet {
         }
       }catch( GoogleJsonResponseException e ){
         System.err.println("Calendar POST calendarList request fail - " + e);
-        redirectToAuth( request, response );
+        //redirectToAuth( request, response );
+        String from = request.getParameter("from");
+        if(from.equals("")) from = "index.html";
+        errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
         return;
       }
     } while (pageToken != null );
@@ -144,7 +147,10 @@ public class CalendarServlet extends HttpServlet {
         } while (pageToken != null);
       }catch( GoogleJsonResponseException e ){
         System.err.println( "Calendar GET request fail:" + e );
-        redirectToAuth( request, response );
+        //redirectToAuth( request, response );
+        String from = request.getParameter("from");
+        if(from.equals("")) from = "index.html";
+        errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
         return;
       }
     }
@@ -215,7 +221,10 @@ public class CalendarServlet extends HttpServlet {
           }
         }catch( GoogleJsonResponseException e ){
           System.err.println("Calendar POST calendarList request fail - " + e);
-          redirectToAuth( request, response );
+          //redirectToAuth( request, response );
+          String from = request.getParameter("from");
+          if(from.equals("")) from = "index.html";
+          errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
           return;
         }
       } while (pageToken != null && calendarID == null );
@@ -272,7 +281,14 @@ public class CalendarServlet extends HttpServlet {
     event.setReminders(reminders);
     */
 
-    event = service.events().insert(calendarID, event).execute();
+    try{
+      event = service.events().insert(calendarID, event).execute();
+    }catch(GoogleJsonResponseException e){
+      String from = request.getParameter("from");
+      if(from.equals("")) from = "index.html";
+      errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
+      return;
+    }
     response.setContentType("application/json");
     Gson gson = new Gson();
     String json = gson.toJson( event );
@@ -280,7 +296,9 @@ public class CalendarServlet extends HttpServlet {
 
   }
 
+  /* Deprecated 
   private void redirectToAuth(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    response.getOutputStream().println("[]");
     String from = "/calendar";
     StringBuilder refererURL = new StringBuilder( from  );
     String query = request.getQueryString();
@@ -289,24 +307,31 @@ public class CalendarServlet extends HttpServlet {
     }
     response.sendRedirect("/credential?referer=" + refererURL );
   }
+  */
 
   private Calendar getService(HttpServletRequest request, HttpServletResponse response, boolean isGet)
     throws IOException{
     UserService userService = UserServiceFactory.getUserService();
 
     if(!userService.isUserLoggedIn()){
-      response.sendRedirect("/login");
+      //response.sendRedirect("/login");
+      errMessage( response, "/login", "User hasn't logged.");
       return null;
     }
     String userId = userService.getCurrentUser().getUserId();
 
     if( userId == null ){
-      response.sendRedirect("/login");
+      //response.sendRedirect("/login");
+      errMessage( response, "/login", "User hasn't logged.");
       return null;
     }
 
     if( request.getSession().getAttribute("authorized") == null ||
         !((boolean) request.getSession().getAttribute("authorized")) ){
+      String from = request.getParameter("from");
+      if(from.equals("")) from = "index.html";
+      errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
+      /*
       if(isGet) redirectToAuth(request, response);
       else{
         //We shouldn't forward POST, which may cause unintended re-POSTs
@@ -314,6 +339,7 @@ public class CalendarServlet extends HttpServlet {
         if(from.equals("")) from = "index.html";
         response.sendRedirect("/credential?referer=" + from);  
       }
+      */
       return null;
     }
 
@@ -321,5 +347,10 @@ public class CalendarServlet extends HttpServlet {
   }
   private boolean checkParam(HttpServletRequest request, String str){
     return request.getParameter( str ) != null && !request.getParameter( str ).equals("");
+  }
+  private void errMessage( HttpServletResponse response, String to, String message )
+    throws IOException{
+    //response.sendError( response.SC_UNAUTHORIZED );
+    response.getOutputStream().println("{\"to\":\""+to+"\",\"error\":\""+message+"\"}");
   }
 }
