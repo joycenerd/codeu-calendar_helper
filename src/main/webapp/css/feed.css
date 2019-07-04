@@ -6,3 +6,16 @@ body {
 .hidden {
   display: none;
 }
+
+#message-container {
+  font-family: 'Lato', helvetica, sans-serif;
+	font-weight: 400;
+	font-size: 18px;
+	line-height:30px;
+	color: #c2d0da !important;
+}
+
+.message-header {
+  color:#fff;
+  font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+}

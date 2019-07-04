@@ -18,7 +18,7 @@
 body {
   max-width: 600px;
   /*background-image: url("https://images.unsplash.com/photo-1457735720963-e277a46f2c68?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");*/ 
-  background-image:url(images/texture-purple-paper-scrapbooking_78790-686.jpg);
+  background-color:#4a47d5 !important;
 }
 
 .about{
@@ -47,14 +47,14 @@ nav a {
   width: 750px; /* Take this */
   height: 1000px;
   padding: 5px; /* Plus this x2 for left and right */
-  background: linear-gradient(to right,#5e00bb,#5e00bb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right,#4a47d5,#4a47d5); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   border-radius: 25px;
 }
 
 .texting {
   font-size: 20px;
   font-family: 'Josefin Sans', sans-serif;
-  color: #f8f8f8;
+  color: #c2d0da;
 }
 
 .heading {
@@ -72,6 +72,35 @@ nav a {
   cursor: pointer;
   animation: 4s blur infinite linear;
 }
+
+#content h1 {
+  color: #fff !important;
+	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-style: normal;
+    text-transform: none;
+	text-decoration: none;
+	text-align: left;
+}
+
+#content p {
+  font-family: 'Lato', helvetica, sans-serif;
+	font-weight: 400;
+	font-size: 18px;
+	line-height:30px;
+	color: #c2d0da !important;
+	text-align: left;
+}
+
+#content #list {
+  font-family: 'Lato', helvetica, sans-serif;
+	font-weight: 400;
+	font-size: 18px;
+	line-height:30px;
+	color: #c2d0da !important;
+	text-align: left;
+}
+
+
 
 
 @keyframes blur {
