@@ -17,14 +17,6 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <!-- OAuth2 -->
-    <script src="/js/OAuth2.js"></script>
-    <!-- Google Calendar API -->
-    <script async defer src="https://apis.google.com/js/api.js"
-      onload="this.onload=function(){};handleClientLoad()"
-      onreadystatechange="if (this.readyState === 'complete') this.onload()">
-    </script>
-    <script src="/js/calendar.js"></script>
     <link rel="stylesheet" href="/css/dashboard.css">
     <title>dashboard</title>
 </head>
@@ -46,9 +38,16 @@
                     <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg"
                         alt="Card image cap">
                     <div class="card-body" id="timeTable">
-                        <h4 class="card-title" id="timeTableTitle"><a>Timetable</a></h4>
-                        <p class="card-text" id="timeTableContext">Move mouse over image to drag</p>
-                        <a href="#" class="btn btn-primary">Details</a>
+                        <div class="row">
+                            <h4 class="card-title col" id="timeTableTitle"><a>Timetable</a></h4>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="card-text col" id="timeTableContext">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <a href="#" class="btn btn-primary col">Details</a>
+                        </div>
                     </div>
                 </div>
             </div>
