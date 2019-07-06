@@ -145,6 +145,8 @@ function loadTimetable(){
         })
   .then((events) => {
       if(events.error != null) window.location.replace(events.to);
+      events.sort(function(a,b){ 
+      return new Date(a.start.dateTime) - new Date(b.start.dateTime)});
       const timeTableContext = document.getElementById('timeTableContext');
       while(timeTableContext.lastChild){
         timeTableContext.removeChild(timeTableContext.lastChild);
