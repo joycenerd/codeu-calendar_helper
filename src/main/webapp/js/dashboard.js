@@ -114,3 +114,79 @@ $(function () {
   });
   $("#todo-list").disableSelection();
 });
+
+//JQuery
+$(document).ready(function() { 
+
+  //Timetable sumit
+  $("#submit").click(function( event ){
+      event.preventDefault();
+      $.post("/calendar", $("#timeTableForm").serializeArray(), function(events){
+          console.log(events);
+          if(events.error != null) window.location.replace(events.to);
+        }, "json")
+      .fail(function(err){
+          console.log(err);
+          });
+      });
+});
+
+//timeTable
+loadTimetable();
+
+function loadTimetable(){
+  var start = new Date();
+  var end = new Date();
+  end.setHours(23,59,59,999);
+  const url = '/calendar?from=dashboard.html&timeMin='+start.toISOString()+"&timeMax="+end.toISOString();
+  fetch(url)
+    .then((response) => {
+        return response.json();
+        })
+  .then((events) => {
+      if(events.error != null) window.location.replace(events.to);
+      const timeTableContext = document.getElementById('timeTableContext');
+      while(timeTableContext.lastChild){
+        timeTableContext.removeChild(timeTableContext.lastChild);
+      }
+      events.forEach(( e ) => {
+          const eventDiv = buildTimetableEntry( e );
+          timeTableContext.appendChild(eventDiv);
+          });
+      });
+}
+
+function buildTimetableEntry( e ) {
+  const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
+  const startTime = new Date(e.start.dateTime);
+  const startColDiv = document.createElement('div');
+  startColDiv.classList.add('col');
+  startColDiv.appendChild( document.createTextNode(startTime.toLocaleTimeString("default", options)) );
+  const startDiv = document.createElement('div');
+  startDiv.appendChild(startColDiv);
+  startDiv.classList.add('row');
+
+  const endTime = new Date(e.end.dateTime);
+  const endColDiv = document.createElement('div');
+  endColDiv.classList.add('col');
+  endColDiv.appendChild( document.createTextNode(endTime.toLocaleTimeString("default", options)) );
+  const endDiv = document.createElement('div');
+  endDiv.appendChild(endColDiv);
+  endDiv.classList.add('row');
+
+  const timeDiv = document.createElement('div');
+  timeDiv.classList.add('col-3', 'pr-0');
+  timeDiv.appendChild( startDiv );
+  timeDiv.appendChild( endDiv );
+
+  const summDiv = document.createElement('div');
+  summDiv.classList.add('col', 'text-turncate');
+  summDiv.appendChild( document.createTextNode(e.summary) );
+
+  const eventDiv = document.createElement('div');
+  eventDiv.classList.add('row', 'align-items-center', 'mb-3');
+  eventDiv.appendChild( timeDiv );
+  eventDiv.appendChild( summDiv );
+
+  return eventDiv;
+}
