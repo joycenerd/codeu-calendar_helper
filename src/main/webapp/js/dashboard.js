@@ -129,7 +129,6 @@ $(document).ready(function() {
   $("#submit").click(function( event ){
       event.preventDefault();
       $.post("/calendar", $("#timeTableForm").serializeArray(), function(events){
-          console.log(events);
           if(events.error != null) window.location.replace(events.to);
         }, "json")
       .fail(function(err){
@@ -148,7 +147,6 @@ function loadTimetable(){
   const url = "/calendar?from=dashboard.html&timeMin="+start.toISOString()+
               "&timeMax="+end.toISOString()+
               "&timezone="+Intl.DateTimeFormat().resolvedOptions().timeZone;
-  console.log("timezone = " + Intl.DateTimeFormat().resolvedOptions().timeZone);
   fetch(url)
     .then((response) => {
         return response.json();
@@ -161,7 +159,6 @@ function loadTimetable(){
       while(timeTableContext.lastChild){
         timeTableContext.removeChild(timeTableContext.lastChild);
       }
-      console.log(events);
       events.forEach(( e ) => {
           if(e.start.dateTime != null){
             const eventDiv = buildTimetableEntry( e );

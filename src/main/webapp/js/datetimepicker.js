@@ -1,6 +1,6 @@
 (function ($) {
     'use strict';
-    $.fn.dateTimePicker = function (options) {
+    $.fn.dateTimePicker = function (options, whichTime) {
 
         var settings = $.extend({
             selectData: "now",
@@ -51,6 +51,12 @@
                     $s.addClass('fa fa-clock-o ico-size');
                     elem.append($s);
                 }
+                $s = $('<input>').attr({
+                    type: "hidden",
+                    name: whichTime,
+                    value: lastSelected.toISOString()
+                    });
+                elem.append($s);
             }
             elem.on('click', function () {
                 var $win = $('<div>');
