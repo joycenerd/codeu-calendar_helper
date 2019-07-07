@@ -121,6 +121,14 @@ $.fn.enterKey = function (fnc) {
     })
 }
 
+// make task in today's task sortable
+$(function () {
+    $("#todo-list").sortable({
+      placeholder: "ui-state-dragging"
+    });
+    $("#todo-list").disableSelection();
+});
+
 
 //JQuery
 $(document).ready(function() { 
