@@ -138,7 +138,10 @@ function loadTimetable(){
   var start = new Date();
   var end = new Date();
   end.setHours(23,59,59,999);
-  const url = '/calendar?from=dashboard.html&timeMin='+start.toISOString()+"&timeMax="+end.toISOString();
+  const url = "/calendar?from=dashboard.html&timeMin="+start.toISOString()+
+              "&timeMax="+end.toISOString()+
+              "&timezone="+Intl.DateTimeFormat().resolvedOptions().timeZone;
+  console.log("timezone = " + Intl.DateTimeFormat().resolvedOptions().timeZone);
   fetch(url)
     .then((response) => {
         return response.json();
@@ -151,9 +154,12 @@ function loadTimetable(){
       while(timeTableContext.lastChild){
         timeTableContext.removeChild(timeTableContext.lastChild);
       }
+      console.log(events);
       events.forEach(( e ) => {
-          const eventDiv = buildTimetableEntry( e );
-          timeTableContext.appendChild(eventDiv);
+          if(e.start.dateTime != null){
+            const eventDiv = buildTimetableEntry( e );
+            timeTableContext.appendChild(eventDiv);
+          }
           });
       });
 }

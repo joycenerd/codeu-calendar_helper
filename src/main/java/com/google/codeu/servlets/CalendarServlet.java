@@ -117,8 +117,6 @@ public class CalendarServlet extends HttpServlet {
 
     DateTime timeMin = new DateTime(System.currentTimeMillis());
     if( checkParam(request, "timeMin") ) timeMin = new DateTime( request.getParameter("timeMin") );
-    System.out.println( "Got timeMin: " + request.getParameter("timeMin") );
-    System.out.println( timeMin );
 
     Calendar.Events.List list = service.events().list(calendarIDs.get(0)).setTimeMin(timeMin);
     if( checkParam(request, "orderBy") ) list.setOrderBy( request.getParameter("orderBy") );
