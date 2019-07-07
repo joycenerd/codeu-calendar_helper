@@ -121,6 +121,14 @@ $.fn.enterKey = function (fnc) {
     })
 }
 
+// make task in today's task sortable
+$(function () {
+    $("#todo-list").sortable({
+      placeholder: "ui-state-dragging"
+    });
+    $("#todo-list").disableSelection();
+});
+
 
 //JQuery
 $(document).ready(function() { 
@@ -129,7 +137,6 @@ $(document).ready(function() {
   $("#submit").click(function( event ){
       event.preventDefault();
       $.post("/calendar", $("#timeTableForm").serializeArray(), function(events){
-          console.log(events);
           if(events.error != null) window.location.replace(events.to);
         }, "json")
       .fail(function(err){
@@ -145,20 +152,26 @@ function loadTimetable(){
   var start = new Date();
   var end = new Date();
   end.setHours(23,59,59,999);
-  const url = '/calendar?from=dashboard.html&timeMin='+start.toISOString()+"&timeMax="+end.toISOString();
+  const url = "/calendar?from=dashboard.html&timeMin="+start.toISOString()+
+              "&timeMax="+end.toISOString()+
+              "&timezone="+Intl.DateTimeFormat().resolvedOptions().timeZone;
   fetch(url)
     .then((response) => {
         return response.json();
         })
   .then((events) => {
       if(events.error != null) window.location.replace(events.to);
+      events.sort(function(a,b){ 
+      return new Date(a.start.dateTime) - new Date(b.start.dateTime)});
       const timeTableContext = document.getElementById('timeTableContext');
       while(timeTableContext.lastChild){
         timeTableContext.removeChild(timeTableContext.lastChild);
       }
       events.forEach(( e ) => {
-          const eventDiv = buildTimetableEntry( e );
-          timeTableContext.appendChild(eventDiv);
+          if(e.start.dateTime != null){
+            const eventDiv = buildTimetableEntry( e );
+            timeTableContext.appendChild(eventDiv);
+          }
           });
       });
 }
