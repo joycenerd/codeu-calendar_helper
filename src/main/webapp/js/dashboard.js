@@ -161,6 +161,9 @@ function loadTimetable(){
         })
   .then((events) => {
       if(events.error != null) window.location.replace(events.to);
+      events = events.filter(function(value, index, events){
+          return value.hasOwnProperty("start") && value.start.hasOwnProperty("dateTime");
+      });
       events.sort(function(a,b){ 
       return new Date(a.start.dateTime) - new Date(b.start.dateTime)});
       const timeTableContext = document.getElementById('timeTableContext');

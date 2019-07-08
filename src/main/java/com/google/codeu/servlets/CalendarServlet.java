@@ -284,6 +284,7 @@ public class CalendarServlet extends HttpServlet {
     try{
       event = service.events().insert(calendarID, event).execute();
     }catch(GoogleJsonResponseException e){
+      System.out.println(e);
       String from = request.getParameter("from");
       if(from.equals("")) from = "index.html";
       errMessage( response, "/credential?referer=" + from, "Authorizaion failed");

@@ -25,7 +25,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#picker').dateTimePicker(null, "startDateTime");
-            $('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "endDateTime");
+            $('#picker-no-time').dateTimePicker(null, "endDateTime"); //Becaue the new endDateTime would be earlier than startDateTime, if user change the startDateTime
+            //$('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "endDateTime");
         })
     </script>
     <link href="/css/datetimepicker.css" rel="stylesheet">
@@ -104,11 +105,9 @@
                                 <div style="width: 200px; margin: 50px auto;">
                                     <div style="width: 250px; margin: 50px auto;">
                                         Start:<div id="picker"> </div>
-                                        <input type="hidden" id="result" value="123" />
                                     </div>
                                     <div style="width: 250px; margin: 20px auto;">
                                         End:<div id="picker-no-time"></div>
-                                        <input type="hidden" id="result2" value="345" />
                                     </div>
                                 </div>
 
