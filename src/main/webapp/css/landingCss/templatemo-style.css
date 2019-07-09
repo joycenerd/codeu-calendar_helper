@@ -300,7 +300,7 @@ h6 {
 }
 
 #work .bg-red {
-	background-color: #5e00bb;
+	background-color: #4a47d5;
 	color: #ffffff;
 }
 
@@ -326,20 +326,33 @@ h6 {
 	color: #303030;
 }
 
+#work h2 {
+	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-style: normal;
+    text-transform: none;
+	text-decoration: none;
+	color: rgb(48, 48, 48);
+}
+
+#work p {
+	color:rgb(48,48,48);
+}
+
 /* team section */
 
 #team {
 	background: #202020 url("https://cdn.pixabay.com/photo/2018/05/04/10/30/team-3373638_960_720.jpg") fixed;
 	background-repeat: no-repeat;
 	background-size: cover;
-	color: #ffffff;
+	color: #4a47d5;
 	padding-top: 100px;
 	padding-bottom: 100px;
 }
 
 #team h2 {
-	color: #77c7db;
+	color:#4a47d5;
 }
+
 
 #team h3 {
 	font-size: 20px;
@@ -347,14 +360,14 @@ h6 {
 }
 
 #team h4 {
-	color: #77c7db;
 	line-height: 10px;
 	font-weight: bold;
+	line-height: 30px;
 }
 
 #team .team-des {
-	background-color: #5e00bb;
-	color: #77c7db;
+	background-color: #4a47d5;
+	color: #ffffff;
 	padding: 20px 12px;
 	position: relative;
 }
