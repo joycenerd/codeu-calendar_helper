@@ -162,7 +162,6 @@ function loadTimetable(){
         headers: headers
       })
     .then((response) => {
-        console.log(response);
         return response.json();
         })
   .then((events) => {
