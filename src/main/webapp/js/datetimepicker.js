@@ -373,6 +373,12 @@
                         $s.addClass('fa fa-clock-o ico-size');
                         elem.append($s);
                     }
+                    $s = $('<input>').attr({
+                        type: "hidden",
+                        name: whichTime,
+                        value: lastSelected.toISOString()
+                        });
+                    elem.append($s);
                 }
 
             });

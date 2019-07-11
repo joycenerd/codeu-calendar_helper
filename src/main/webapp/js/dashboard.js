@@ -136,7 +136,7 @@ $(document).ready(function() {
   //Timetable sumit
   $("#submit").click(function( event ){
       event.preventDefault();
-      $.post("/calendar", $("#timeTableForm").serializeArray(), function(events){
+      $.post("/dashboard/calendar", $("#timeTableForm").serializeArray(), function(events){
           if(events.error != null) window.location.replace(events.to);
         }, "json")
       .fail(function(err){
@@ -152,15 +152,24 @@ function loadTimetable(){
   var start = new Date();
   var end = new Date();
   end.setHours(23,59,59,999);
-  const url = "/calendar?from=dashboard.html&timeMin="+start.toISOString()+
+  const url = "/dashboard/calendar?from=dashboard.html&timeMin="+start.toISOString()+
               "&timeMax="+end.toISOString()+
               "&timezone="+Intl.DateTimeFormat().resolvedOptions().timeZone;
-  fetch(url)
+  var headers = new Headers({
+      'isFetch': 'true'
+      });
+  fetch(url, {
+        headers: headers
+      })
     .then((response) => {
+        console.log(response);
         return response.json();
         })
   .then((events) => {
-      if(events.error != null) window.location.replace(events.to);
+      if(events.error != null) window.location.replace(events.to);  //calendar errors
+      events = events.filter(function(value, index, events){
+          return value.hasOwnProperty("start") && value.start.hasOwnProperty("dateTime");
+      });
       events.sort(function(a,b){ 
       return new Date(a.start.dateTime) - new Date(b.start.dateTime)});
       const timeTableContext = document.getElementById('timeTableContext');
