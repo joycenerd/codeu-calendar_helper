@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.codeu.servlets.CredentialServlet;
 
-@WebServlet("/calendar")
+@WebServlet("/dashboard/calendar")
 public class CalendarServlet extends HttpServlet {
   private static final String APPLICATION_NAME = "Google Calendar API Java Quickstart";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -106,14 +106,10 @@ public class CalendarServlet extends HttpServlet {
       }catch( GoogleJsonResponseException e ){
         System.err.println("Calendar POST calendarList request fail - " + e);
         //redirectToAuth( request, response );
-        String from = request.getParameter("from");
-        if(from.equals("")) from = "index.html";
-        errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
+        errMessage( response, "/dashboard/credential", "Authorizaion failed");
         return;
       }
     } while (pageToken != null );
-
-    System.out.println("calendarIDs = " + calendarIDs);
 
     DateTime timeMin = new DateTime(System.currentTimeMillis());
     if( checkParam(request, "timeMin") ) timeMin = new DateTime( request.getParameter("timeMin") );
@@ -148,9 +144,11 @@ public class CalendarServlet extends HttpServlet {
       }catch( GoogleJsonResponseException e ){
         System.err.println( "Calendar GET request fail:" + e );
         //redirectToAuth( request, response );
+        /*
         String from = request.getParameter("from");
         if(from.equals("")) from = "index.html";
-        errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
+        */
+        errMessage( response, "/dashboard/credential", "Authorizaion failed");
         return;
       }
     }
@@ -222,9 +220,7 @@ public class CalendarServlet extends HttpServlet {
         }catch( GoogleJsonResponseException e ){
           System.err.println("Calendar POST calendarList request fail - " + e);
           //redirectToAuth( request, response );
-          String from = request.getParameter("from");
-          if(from.equals("")) from = "index.html";
-          errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
+          errMessage( response, "/dashboard/credential", "Authorizaion failed");
           return;
         }
       } while (pageToken != null && calendarID == null );
@@ -285,9 +281,7 @@ public class CalendarServlet extends HttpServlet {
       event = service.events().insert(calendarID, event).execute();
     }catch(GoogleJsonResponseException e){
       System.out.println(e);
-      String from = request.getParameter("from");
-      if(from.equals("")) from = "index.html";
-      errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
+      errMessage( response, "/dashboard/credential", "Authorizaion failed");
       return;
     }
     response.setContentType("application/json");
@@ -329,9 +323,7 @@ public class CalendarServlet extends HttpServlet {
 
     if( request.getSession().getAttribute("authorized") == null ||
         !((boolean) request.getSession().getAttribute("authorized")) ){
-      String from = request.getParameter("from");
-      if(from.equals("")) from = "index.html";
-      errMessage( response, "/credential?referer=" + from, "Authorizaion failed");
+      errMessage( response, "/dashboard/credential", "Authorizaion failed");
       /*
       if(isGet) redirectToAuth(request, response);
       else{

@@ -25,7 +25,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $('#picker').dateTimePicker(null, "startDateTime");
-            $('#picker-no-time').dateTimePicker(null, "endDateTime"); //Becaue the new endDateTime would be earlier than startDateTime, if user change the startDateTime
+            $('#picker-no-time').dateTimePicker(null, "endDateTime"); //Because the new endDateTime would be earlier than startDateTime, if user change the startDateTime
             //$('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "endDateTime");
         })
     </script>
@@ -85,7 +85,7 @@
             <div id="draggable-1" class="card">
                 <h5 class="card-header primary-color white-text">#Tag</h5>
                 <div class="card-body">
-                    <form id="tag-form" action="/calendar" method="POST" class="hidden">
+                    <form id="tag-form" action="/dashboard/calendar" method="POST" class="hidden">
                         <table rules="all" style="background:#fff;">
                             <tr>
                                 <td style="font-size:14px;">Tags:</td>

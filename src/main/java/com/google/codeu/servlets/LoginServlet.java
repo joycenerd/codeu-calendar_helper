@@ -38,6 +38,7 @@ public class LoginServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
 
+    System.out.println("I'm in Login!");
     // If the user is already logged in, redirect to their page
     if (userService.isUserLoggedIn()) {
       String user = userService.getCurrentUser().getEmail();
@@ -45,12 +46,12 @@ public class LoginServlet extends HttpServlet {
 
       if( request.getSession().getAttribute("authorized") == null ||
           !((boolean) request.getSession().getAttribute("authorized")) ){
-        response.sendRedirect("/credential?referer=/login");  
+        response.sendRedirect("/dashboard/credential");  
         return;
       }
       
-      // If the user has already authorized, redirect to their page
-      response.sendRedirect("/user-page.html?user=" + user);  
+      // If the user has already authorized, redirect to dashboard
+      response.sendRedirect("/dashboard.html");  
       return;
     }
 
