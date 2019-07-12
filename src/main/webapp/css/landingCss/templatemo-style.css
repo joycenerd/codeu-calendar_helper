@@ -386,8 +386,30 @@ h6 {
 }
 
 #portfolio h2 {
-	line-height: 20px;
+	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-style: normal;
+    text-transform: none;
+	text-decoration: none;
+	color: rgb(48, 48, 48);
 }
+
+#portfolio p {
+	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-style: normal;
+	text-transform: none;
+	text-decoration: none;
+	color: rgb(48, 48, 48);
+}
+
+.modal {
+	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-style: normal;
+	text-transform: none;
+	text-decoration: none;
+	color: #c2d0da;
+	background-color: #4a47d5 !important;
+}
+
 
 #portfolio h3 {
 	color: #5e00bb;
@@ -411,6 +433,10 @@ h6 {
 
 #portfolio img:hover {
 	opacity: 0.9;
+}
+
+.modal a.close-modal {
+	position:static !important;
 }
 
 /* price section */
