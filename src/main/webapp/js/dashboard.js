@@ -203,16 +203,16 @@ function buildTimetableEntry( e ) {
   endDiv.classList.add('row');
 
   const timeDiv = document.createElement('div');
-  timeDiv.classList.add('col-3', 'pr-0');
+  timeDiv.classList.add('col-3', 'pr-0', 'table-time');
   timeDiv.appendChild( startDiv );
   timeDiv.appendChild( endDiv );
 
   const summDiv = document.createElement('div');
-  summDiv.classList.add('col', 'text-turncate');
+  summDiv.classList.add('col', 'text-turncate', 'table-summary');
   summDiv.appendChild( document.createTextNode(e.summary) );
 
   const eventDiv = document.createElement('div');
-  eventDiv.classList.add('row', 'align-items-center', 'mb-3');
+  eventDiv.classList.add('row', 'align-items-center', 'mb-3', 'table-entry');
   eventDiv.appendChild( timeDiv );
   eventDiv.appendChild( summDiv );
 
