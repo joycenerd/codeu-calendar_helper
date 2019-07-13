@@ -1,40 +1,44 @@
 <html>
-  <head>
+
+<head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="js/test.js"></script>
-  </head>
-  <body>
+</head>
+
+<body>
   <label>
-      Only accept one event/calendar update at one time.
-      Value regulation: only accept plain text. //Would process here, just remind you whether you want to tell the user about it.
-      @param from: This POST is from which site. E.g. "/index.html" or "/testabc.html"
-      @param summary: Event title/summary.
-      @param startDate: start date  
-      @param startTime: start time  
-      @param endDate: end date
-      @param endTime: end time
-      @param tags: Event tags, which will be stored in description as #abc or #[String].
-                   Please use comma to seperate.
-                   E.g. tags=a,b,c -> it would be processed as "#a #b #c" into description.
-      
-      optional - 
-      @param calendar:  The name of calendar that user wants to update/insert.
-                        If this calendar hasn't been created, it would be created here.
-                        Null stands for primary.
-      @param description: Event description.
-      @param timezone: timezone of this event, default would be the user's time zone
+    Only accept one event/calendar update at one time.
+    Value regulation: only accept plain text. //Would process here, just remind you whether you want to tell the user
+    about it.
+    @param from: This POST is from which site. E.g. "/index.html" or "/testabc.html"
+    @param summary: Event title/summary.
+    @param startDate: start date
+    @param startTime: start time
+    @param endDate: end date
+    @param endTime: end time
+    @param tags: Event tags, which will be stored in description as #abc or #[String].
+    Please use comma to seperate.
+    E.g. tags=a,b,c -> it would be processed as "#a #b #c" into description.
+
+    optional -
+    @param calendar: The name of calendar that user wants to update/insert.
+    If this calendar hasn't been created, it would be created here.
+    Null stands for primary.
+    @param description: Event description.
+    @param timezone: timezone of this event, default would be the user's time zone
   </label>
   <a href="/test">Test</a>
   <!--<form action="/calendar" method="POST" id="timeTableForm">-->
   <form id="timeTableForm">
     Calendar: <input type="text" name="calendar"><br>
     Event summary: <input type="text" value="sleep" name="summary"><br>
-    startDateTime: <input type="text" value="2019-06-29T20:00:00+08:00" name="startDateTime"><br>
-    endDateTime: <input type="text" value="2019-06-29T22:00:00+08:00" name="endDateTime"><br>
+    startDateTime: <input type="text" value="2019-07-29T20:00:00+08:00" name="startDateTime"><br>
+    endDateTime: <input type="text" value="2019-07-29T22:00:00+08:00" name="endDateTime"><br>
     Description: <input type="text" value="it's just an example" name="description"><br>
     Tags: <input type="text" value="train, tip, here" name="tags"><br>
     <input type="hidden" name="from" value="test.html">
     <input type="submit" value="Submit" id="submit">
   </form>
-  </body>
+</body>
+
 </html>

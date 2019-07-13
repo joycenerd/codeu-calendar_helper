@@ -24,10 +24,17 @@
     <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#picker').dateTimePicker(null, "startDateTime");
-            $('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "endDateTime");
-            $("#but").click(function () {
-                $("#tag-form").submit();
+            $('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "startDateTime");
+            $('#picker').dateTimePicker(null, "endDateTime");
+            $("#sub").click(function (event) {
+                event.preventDefault();
+                $.post("/calendar", $("#tag-form").serializeArray(), function (data) {
+                    console.log(data);
+                    if (data.error != null) window.location.replace(data.to);
+                }, "json")
+                    .fail(function (err) {
+                        console.log(err);
+                    });
             });
         })
     </script>
@@ -101,18 +108,19 @@
                             </tr>
                             <tr id="rowId">
 
-                                <td><input id="tagbox1" name="tags" type="text" value="2" size="17%" /></td>
-                                <td><input id="textbox1" name="summary" type="text" value="12" /></td>
+                                <td><input id="tagbox1" name="tags" type="text" size="17%" /></td>
+                                <td><input id="textbox1" name="summary" type="text" /></td>
 
                                 <div style="width: 200px; margin: 50px auto;">
-                                    <div style="width: 250px; margin: 50px auto;">
-                                        Start:<div id="picker"> </div>
-                                        <input type="hidden" id="result" value="123" />
-                                    </div>
                                     <div style="width: 250px; margin: 20px auto;">
-                                        End:<div id="picker-no-time"></div>
-                                        <input type="hidden" id="result2" value="345" />
+                                        Start:<div id="picker-no-time"></div>
+                                        <input type="hidden" id="result" />
                                     </div>
+                                    <div style="width: 250px; margin: 50px auto;">
+                                        End:<div id="picker"> </div>
+                                        <input type="hidden" id="result2" />
+                                    </div>
+
                                 </div>
 
                             </tr>
@@ -121,7 +129,7 @@
                         <input type='button' value='Get tag Value' id='getButtonValue'><br>
                         Enter description with tags:
                         <br />
-                        <input type="text" value="it's just an example" name="description">
+                        <input type="text" name="description">
                         <br />
                         <input type="hidden" name="from" value="dashboard.html">
                         <input id="sub" type="submit" class="btn btn-primary" value="Submit">
