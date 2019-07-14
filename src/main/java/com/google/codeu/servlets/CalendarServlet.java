@@ -59,7 +59,6 @@ public class CalendarServlet extends HttpServlet {
   /*
     Get events of one/all calendar(s) from start time to end time with limited/unlimited maximum number.
     @param from: This POST is from which site. E.g. "/index.html" or "/testabc.html"
-    //@param tags: The tags stored in the description. E.g. "#abc" or "train"
     
     optional - 
     @param calendar:  The name of calendar that user asks for events.
@@ -71,6 +70,7 @@ public class CalendarServlet extends HttpServlet {
     @param timeMax:   The latest time of return event.  Default is unlimited. Require RFC3339 format.
     @param timezone:  Return events in timezone. Default is where this user is.
     @param prettyPrint: true/false. Resaults will contain indentataion and line breaks.
+    @param tag: For search certain events that contains this tag, which is stored in the description. E.g. "abc" or "train"
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -135,6 +135,8 @@ public class CalendarServlet extends HttpServlet {
       list.setTimeZone( timezone );
     }
     if( checkParam(request, "prettyPrint") ) list.setPrettyPrint( Boolean.parseBoolean( request.getParameter("prettyPrint")));
+    String tag = null;
+    if( checkParam(request, "tag") ) list.setQ( "#" + request.getParameter("tag") );
 
     List<Event> eventList = new ArrayList<Event>(); //ArrayList is not synchronized not like vector. It works better in multiple threads
     for(int i = 0; i < calendarIDs.size(); ++i){
