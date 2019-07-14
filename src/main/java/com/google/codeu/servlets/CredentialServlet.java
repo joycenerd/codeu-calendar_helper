@@ -78,7 +78,8 @@ public class CredentialServlet extends HttpServlet {
   /*
      To initialize flow, GoogleAuthorizationCodeFlow.
   */
-  public CredentialServlet(){
+  @Override
+  public void init() {
     List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     // Load client secrets.

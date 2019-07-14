@@ -59,7 +59,6 @@ public class CalendarServlet extends HttpServlet {
   /*
     Get events of one/all calendar(s) from start time to end time with limited/unlimited maximum number.
     @param from: This POST is from which site. E.g. "/index.html" or "/testabc.html"
-    //@param tags: The tags stored in the description. E.g. "#abc" or "train"
     
     optional - 
     @param calendar:  The name of calendar that user asks for events.
@@ -71,6 +70,7 @@ public class CalendarServlet extends HttpServlet {
     @param timeMax:   The latest time of return event.  Default is unlimited. Require RFC3339 format.
     @param timezone:  Return events in timezone. Default is where this user is.
     @param prettyPrint: true/false. Resaults will contain indentataion and line breaks.
+    @param tag: For search certain events that contains this tag, which is stored in the description. E.g. "abc" or "train"
    */
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -124,11 +124,21 @@ public class CalendarServlet extends HttpServlet {
         System.err.println("@param maxResults in Calendar doGet(): " + e );
       }
     }
-    if( checkParam(request, "timeMax") ) list.setTimeMax( new DateTime( request.getParameter("timeMax") ) );
-    if( checkParam(request, "timezone") ) list.setTimeZone( request.getParameter("timezone") );
+    DateTime timeMax = null;
+    if( checkParam(request, "timeMax") ){
+      timeMax = new DateTime( request.getParameter("timeMax") );
+      list.setTimeMax( timeMax );
+    }
+    String timezone = null;
+    if( checkParam(request, "timezone") ){
+      timezone = request.getParameter("timezone");
+      list.setTimeZone( timezone );
+    }
     if( checkParam(request, "prettyPrint") ) list.setPrettyPrint( Boolean.parseBoolean( request.getParameter("prettyPrint")));
+    String tag = null;
+    if( checkParam(request, "tag") ) list.setQ( "#" + request.getParameter("tag") );
 
-    List<Event> eventList = null;
+    List<Event> eventList = new ArrayList<Event>(); //ArrayList is not synchronized not like vector. It works better in multiple threads
     for(int i = 0; i < calendarIDs.size(); ++i){
       list.setCalendarId( calendarIDs.get(i) );
       try{
@@ -136,9 +146,20 @@ public class CalendarServlet extends HttpServlet {
         pageToken = null;
         do {
           Events events = list.setPageToken(pageToken).execute();
-          if( eventList == null ) eventList = events.getItems();
-          else eventList.addAll( events.getItems() );
-          List<Event> items = events.getItems();
+
+          for( Event event: events.getItems() ){
+            if(event.getRecurrence() != null){ //get Instances from a recurrent event
+              Calendar.Events.Instances instances = service.events().
+                instances(calendarIDs.get(i), event.getId())
+                .setTimeMin(timeMin);
+              if(timeMax != null) instances.setTimeMax( timeMax );
+              if(timezone != null) instances.setTimeZone( timezone );
+
+              eventList.addAll( getInstances( instances ) );
+              
+            }else eventList.add( event );
+          }
+
           pageToken = events.getNextPageToken();
         } while (pageToken != null);
       }catch( GoogleJsonResponseException e ){
@@ -152,6 +173,7 @@ public class CalendarServlet extends HttpServlet {
         return;
       }
     }
+
 
 
     response.setContentType("application/json; charset=UTF-8");
@@ -345,5 +367,18 @@ public class CalendarServlet extends HttpServlet {
     throws IOException{
     //response.sendError( response.SC_UNAUTHORIZED );
     response.getOutputStream().println("{\"to\":\""+to+"\",\"error\":\""+message+"\"}");
+  }
+  private List<Event> getInstances(Calendar.Events.Instances instances )
+      throws GoogleJsonResponseException, IOException{
+        List<Event> retList = null;
+        String pageToken = null;
+        do {
+          Events events = instances.setPageToken(pageToken).execute();
+          if( retList == null ) retList = events.getItems();
+          else retList.addAll( events.getItems() );
+          pageToken = events.getNextPageToken();
+        } while (pageToken != null);
+  
+        return retList;
   }
 }
