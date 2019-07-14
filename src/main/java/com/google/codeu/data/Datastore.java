@@ -25,6 +25,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -200,5 +201,70 @@ public class Datastore {
     }
 
     return tasks;
+  }
+
+  public void storeTag(Tag tag) {
+    Entity tagEntity = new Entity("Tag", tag.getId().toString());
+    tagEntity.setProperty("userId", tag.getUserId());
+    tagEntity.setProperty("tag", tag.getTag());
+    tagEntity.setProperty("eventDateTime", tag.getEventDateTime());
+    tagEntity.setProperty("timestamp", tag.getTimestamp());
+
+    datastore.put(tagEntity);
+  }
+  public void update(Entity tagEntity){
+    if( "Tag".equals(tagEntity.getKind()) == false ){
+      throw new IllegalArgumentException("Invalid TagEntity for update.");
+    }  
+    datastore.put( tagEntity );
+  }
+  public void deleteTag(UUID tagId) {
+    datastore.delete(KeyFactory.createKey("Tag", tagId.toString()));
+  }
+  public Entity getTagEntity(String userId, String tag){
+    Query query = new Query("Tag")
+                      .setFilter(new Query.FilterPredicate("userId", FilterOperator.EQUAL, userId))
+                      .setFilter(new Query.FilterPredicate("tag", FilterOperator.EQUAL, tag));
+
+    PreparedQuery results = datastore.prepare(query);
+    try{
+      return results.asSingleEntity();
+    }catch(PreparedQuery.TooManyResultsException e){
+      System.err.println("Too many results from userId, " + userId + ", and tag, " + tag );
+    }
+    return null;
+  }
+  /**
+   * Gets tasks posted by a specific user.
+   *
+   * @return a list of tasks created by the user, or empty list if user has never created a
+   *     task. List is sorted by added time ascending.
+   */
+  public List<Tag> getTags(String userId) {
+    List<Tag> tags = new ArrayList<>();
+
+    Query query = new Query("Tag")
+                      .setFilter(new Query.FilterPredicate("userId", FilterOperator.EQUAL, userId))
+                      .addSort("timestamp", SortDirection.ASCENDING);
+    PreparedQuery results = datastore.prepare(query);
+
+    // asIterable is more efficient than asList
+    for (Entity entity : results.asIterable()) {
+      try {
+        String idString = entity.getKey().getName();
+        String tagName = (String) entity.getProperty("tag");
+        long eventDateTime = (long) entity.getProperty("eventDateTime");
+        long timestamp = (long) entity.getProperty("timestamp");
+
+        Tag tag = new Tag(userId, tagName, eventDateTime, timestamp);
+        tags.add(tag);
+      } catch (Exception e) {
+        System.err.println("Error reading tags.");
+        System.err.println(entity.toString());
+        e.printStackTrace();
+      }
+    }
+
+    return tags;
   }
 }
