@@ -163,7 +163,7 @@ h6 {
 }
 
 #home .btn {
-	background:#4a47d5;
+	background: #4a47d5;
 	border-radius: 4px;
 	border: none;
 	color: #ffffff;
@@ -174,7 +174,7 @@ h6 {
 
 #home .btn:hover {
 	background: #fff;
-	color:#4a47d5;
+	color: #4a47d5;
 	transition: all 0.4s ease-in-out;
 }
 
@@ -212,7 +212,7 @@ h6 {
 }
 
 .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
-	color:#4a47d5;
+	color: #4a47d5;
 	background-color: transparent;
 }
 
@@ -239,8 +239,7 @@ h6 {
 #intro {
 	padding-top: 180px;
 	padding-bottom: 140px;
-	background:#4a47d5;
-	
+	background: #4a47d5;
 }
 
 #intro h4 {
@@ -249,34 +248,33 @@ h6 {
 
 #intro h1 {
 	color: #fff !important;
-	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
 	font-style: normal;
-    text-transform: none;
+	text-transform: none;
 	text-decoration: none;
 	text-align: left;
 }
 
 #intro .column {
-	float:left;
+	float: left;
 }
 
 #intro .left, #intro .right {
-	width:25%;
+	width: 25%;
 }
 
 #intro .middle {
-	width:50%;
+	width: 50%;
 }
 
 #intro p {
 	font-family: 'Lato', helvetica, sans-serif;
 	font-weight: 400;
 	font-size: 18px;
-	line-height:30px;
+	line-height: 30px;
 	color: #c2d0da !important;
 	text-align: left;
 }
-
 
 /* work section */
 
@@ -327,15 +325,15 @@ h6 {
 }
 
 #work h2 {
-	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
 	font-style: normal;
-    text-transform: none;
+	text-transform: none;
 	text-decoration: none;
 	color: rgb(48, 48, 48);
 }
 
 #work p {
-	color:rgb(48,48,48);
+	color: rgb(48, 48, 48);
 }
 
 /* team section */
@@ -350,9 +348,8 @@ h6 {
 }
 
 #team h2 {
-	color:#4a47d5;
+	color: #4a47d5;
 }
-
 
 #team h3 {
 	font-size: 20px;
@@ -386,30 +383,30 @@ h6 {
 }
 
 #portfolio h2 {
-	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
-	font-style: normal;
-    text-transform: none;
-	text-decoration: none;
-	color: rgb(48, 48, 48);
-}
-
-#portfolio p {
-	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
 	font-style: normal;
 	text-transform: none;
 	text-decoration: none;
 	color: rgb(48, 48, 48);
 }
 
+#portfolio p {
+	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
+	font-style: normal;
+	text-transform: none;
+	text-decoration: none;
+	color: rgb(48, 48, 48);
+	font-size: 18px;
+}
+
 .modal {
-	font-family: 'Lato',Helvetica,Arial,Lucida,sans-serif;
+	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
 	font-style: normal;
 	text-transform: none;
 	text-decoration: none;
 	color: #c2d0da;
 	background-color: #4a47d5 !important;
 }
-
 
 #portfolio h3 {
 	color: #5e00bb;
@@ -436,7 +433,7 @@ h6 {
 }
 
 .modal a.close-modal {
-	position:static !important;
+	position: static !important;
 }
 
 /* price section */
@@ -449,50 +446,43 @@ h6 {
 	padding-bottom: 120px;
 }
 
-#price .plan {
-	background: #5e00bb;
-	color: #ffffff;
-	padding: 0 0 60px 0;
+#price h2 {
+	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
+	font-style: normal;
+	text-transform: none;
+	text-decoration: none;
+	color: #4a47d5;
 }
 
-#price .plan .plan_title {
-	background-color: #f6f6f6;
-	color: #77c7db;
-	padding-top: 40px;
-	padding-bottom: 40px;
+#price p {
+	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
+	font-style: normal;
+	text-transform: none;
+	text-decoration: none;
+	color: #4a47d5;
+	font-weight: normal;
+	font-size: 18px;
 }
 
-#price .plan .plan_sub_title {
-	border-bottom: 1px solid #ffffff;
-	padding: 30px;
+#price blockquote {
+	font-size: 18px;
+	width: 80%;
+	margin: 50px auto;
+	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
+	color: rgb(48, 48, 48);
+	padding: 1.2em 30px 1.2em 75px;
+	border-left: 8px solid #4a47d5;
+	line-height: 1.6;
+	position: relative;
+	background: #EDEDED;
 }
 
-#price .plan ul {
-	padding: 0;
-}
-
-#price .plan ul li {
+#price blockquote span {
 	display: block;
-	font-family: "Proxima";
-	font-size: 16px;
-	padding: 40px 0 10px 0;
-}
-
-#price .plan .btn {
-	background: #77c7db;
-	border: none;
-	border-radius: 0;
-	color: #202020;
-	font-size: 16px;
+	color: #4a47d5;
 	font-weight: bold;
-	padding: 20px 40px;
-	transition: all 0.4s ease-in-out;
-	margin-top: 20px;
-}
-
-#price .plan .btn:hover {
-	background: #a4a4ff;
-	color: #ffffff;
+	margin-top: 1em;
+	font-size: 20px;
 }
 
 /* google map section */
@@ -570,6 +560,3 @@ h6 {
 		padding-top: 60px;
 	}
 }
-
-
-
