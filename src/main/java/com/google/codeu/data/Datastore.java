@@ -18,12 +18,14 @@ package com.google.codeu.data;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.FetchOptions;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -154,5 +156,115 @@ public class Datastore {
     String aboutMe = (String) usereEntity.getProperty("aboutMe");
     User user = new User(email, aboutMe);
     return user;
+  }
+
+  public void storeTask(Task task) {
+    Entity taskEntity = new Entity("Task", task.getId().toString());
+    taskEntity.setProperty("userId", task.getUserId());
+    taskEntity.setProperty("summary", task.getSummary());
+    taskEntity.setProperty("timestamp", task.getTimestamp());
+
+    datastore.put(taskEntity);
+  }
+  public void deleteTask(UUID taskId) {
+    datastore.delete(KeyFactory.createKey("Task", taskId.toString()));
+  }
+  /**
+   * Gets tasks posted by a specific user.
+   *
+   * @return a list of tasks created by the user, or empty list if user has never created a
+   *     task. List is sorted by added time ascending.
+   */
+  public List<Task> getTasks(String userId) {
+    List<Task> tasks = new ArrayList<>();
+
+    Query query = new Query("Task")
+                      .setFilter(new Query.FilterPredicate("userId", FilterOperator.EQUAL, userId))
+                      .addSort("timestamp", SortDirection.ASCENDING);
+    PreparedQuery results = datastore.prepare(query);
+
+    // asIterable is more efficient than asList
+    for (Entity entity : results.asIterable()) {
+      try {
+        String idString = entity.getKey().getName();
+        UUID id = UUID.fromString(idString);
+        String summary = (String) entity.getProperty("summary");
+        long timestamp = (long) entity.getProperty("timestamp");
+
+        Task task = new Task(id, userId, summary, timestamp);
+        tasks.add(task);
+      } catch (Exception e) {
+        System.err.println("Error reading tasks.");
+        System.err.println(entity.toString());
+        e.printStackTrace();
+      }
+    }
+
+    return tasks;
+  }
+
+  public void storeTag(Tag tag) {
+    Entity tagEntity = new Entity("Tag", tag.getId().toString());
+    tagEntity.setProperty("userId", tag.getUserId());
+    tagEntity.setProperty("tag", tag.getTag());
+    tagEntity.setProperty("eventDateTime", tag.getEventDateTime());
+    tagEntity.setProperty("timestamp", tag.getTimestamp());
+
+    datastore.put(tagEntity);
+  }
+  public void update(Entity tagEntity){
+    if( "Tag".equals(tagEntity.getKind()) == false ){
+      throw new IllegalArgumentException("Invalid TagEntity for update.");
+    }  
+    datastore.put( tagEntity );
+  }
+  public void deleteTag(UUID tagId) {
+    datastore.delete(KeyFactory.createKey("Tag", tagId.toString()));
+  }
+  public Entity getTagEntity(String userId, String tag){
+    Query query = new Query("Tag")
+                      .setFilter(new Query.FilterPredicate("userId", FilterOperator.EQUAL, userId))
+                      .setFilter(new Query.FilterPredicate("tag", FilterOperator.EQUAL, tag));
+
+    PreparedQuery results = datastore.prepare(query);
+    try{
+      return results.asSingleEntity();
+    }catch(PreparedQuery.TooManyResultsException e){
+      System.err.println("Too many results from userId, " + userId + ", and tag, " + tag );
+    }
+    return null;
+  }
+  /**
+   * Gets tasks posted by a specific user.
+   *
+   * @return a list of tasks created by the user, or empty list if user has never created a
+   *     task. List is sorted by added time ascending.
+   */
+  public List<Tag> getTags(String userId) {
+    List<Tag> tags = new ArrayList<>();
+
+    Query query = new Query("Tag")
+                      .setFilter(new Query.FilterPredicate("userId", FilterOperator.EQUAL, userId))
+                      .addSort("timestamp", SortDirection.ASCENDING);
+    PreparedQuery results = datastore.prepare(query);
+
+    // asIterable is more efficient than asList
+    for (Entity entity : results.asIterable()) {
+      try {
+        String idString = entity.getKey().getName();
+        String tagName = (String) entity.getProperty("tag");
+        long eventDateTime = (long) entity.getProperty("eventDateTime");
+        long timestamp = (long) entity.getProperty("timestamp");
+
+        Tag tag = new Tag(userId, tagName, eventDateTime, timestamp);
+        tags.add(tag);
+      } catch (Exception e) {
+        System.err.println("Error reading tags.");
+        System.err.println(entity.toString());
+        e.printStackTrace();
+      }
+    }
+
+    return tags;
   }
 }

@@ -62,7 +62,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
  * Redirects the user to the Google login page or their page if they're already logged in.
  */
 //@WebServlet( urlPatterns = {"/OAuth2", "/refreshToken"}, displayName = "Connecting to Google API...")
-@WebServlet( "/credential" )
+@WebServlet( "/dashboard/credential" )
 public class CredentialServlet extends HttpServlet {
 
   private static final String CREDENTIALS_FILE_PATH = "/client_secret_Calendar_Events.json";
@@ -78,7 +78,8 @@ public class CredentialServlet extends HttpServlet {
   /*
      To initialize flow, GoogleAuthorizationCodeFlow.
   */
-  public CredentialServlet(){
+  @Override
+  public void init() {
     List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     // Load client secrets.
@@ -135,25 +136,20 @@ public class CredentialServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    //For there's LoginFilter to make sure the user has logged in.
     UserService userService = UserServiceFactory.getUserService();
-
-    // If the user is already logged in, redirect to their page
-    if (userService.isUserLoggedIn() == false) {
-      response.sendRedirect( "/login" );
-      return; //return for preventing redirecting again or conduct the code below
-    }
-
     String userId = userService.getCurrentUser().getUserId(); //unique
+
     /*
       Record the previous url
       //parameters are the GET variables, while attributes are variables sent by server-side. Objects are fine as attribute.
-    */
     if(DATA_STORE_FACTORY.getDataStore("OAuth2Referer").get(userId) == null ){
       String referer = "/index.html";
       if( request.getParameter("referer") != null && !request.getParameter("referer").equals("") ) referer = request.getParameter("referer");
       DATA_STORE_FACTORY.getDataStore("OAuth2Referer").set(userId, referer);
       System.out.println( "First entered Credential from: " +  referer);
     }
+    */
 
     Credential credential = flow.loadCredential(userId);
     boolean authorized = credential != null;
@@ -210,11 +206,13 @@ public class CredentialServlet extends HttpServlet {
       request.getSession().setAttribute("authorized", true);
     }
 
-    // When using response.sendRedirect, saving(?) somethings like response.getOutputStream().println(json) will make a bug like it has been committed.
+    // When using response.sendRedirect, saving(?) something like response.getOutputStream().println(json) will make a bug like it has been committed.
+    /*
     Serializable refererURL = DATA_STORE_FACTORY.getDataStore("OAuth2Referer").get(userId);
     DATA_STORE_FACTORY.getDataStore("OAuth2Referer").delete(userId);
     System.out.println("Leaving from Credential to referer = " + refererURL);
-    response.sendRedirect(refererURL.toString());  
+    */
+    response.sendRedirect("/dashboard.html");  
   }
 
   /*
