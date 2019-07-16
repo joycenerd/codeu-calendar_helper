@@ -136,7 +136,7 @@ $(document).ready(function() {
   //Timetable sumit
   $("#submit").click(function( event ){
       event.preventDefault();
-      $.post("/calendar", $("#timeTableForm").serializeArray(), function(events){
+      $.post("/dashboard/calendar", $("#timeTableForm").serializeArray(), function(events){
           if(events.error != null) window.location.replace(events.to);
         }, "json")
       .fail(function(err){
@@ -152,15 +152,23 @@ function loadTimetable(){
   var start = new Date();
   var end = new Date();
   end.setHours(23,59,59,999);
-  const url = "/calendar?from=dashboard.html&timeMin="+start.toISOString()+
+  const url = "/dashboard/calendar?from=dashboard.html&timeMin="+start.toISOString()+
               "&timeMax="+end.toISOString()+
               "&timezone="+Intl.DateTimeFormat().resolvedOptions().timeZone;
-  fetch(url)
+  var headers = new Headers({
+      'isFetch': 'true'
+      });
+  fetch(url, {
+        headers: headers
+      })
     .then((response) => {
         return response.json();
         })
   .then((events) => {
-      if(events.error != null) window.location.replace(events.to);
+      if(events.error != null) window.location.replace(events.to);  //calendar errors
+      events = events.filter(function(value, index, events){
+          return value.hasOwnProperty("start") && value.start.hasOwnProperty("dateTime");
+      });
       events.sort(function(a,b){ 
       return new Date(a.start.dateTime) - new Date(b.start.dateTime)});
       const timeTableContext = document.getElementById('timeTableContext');
@@ -195,16 +203,16 @@ function buildTimetableEntry( e ) {
   endDiv.classList.add('row');
 
   const timeDiv = document.createElement('div');
-  timeDiv.classList.add('col-3', 'pr-0');
+  timeDiv.classList.add('col-3', 'pr-0', 'table-time');
   timeDiv.appendChild( startDiv );
   timeDiv.appendChild( endDiv );
 
   const summDiv = document.createElement('div');
-  summDiv.classList.add('col', 'text-turncate');
+  summDiv.classList.add('col', 'text-turncate', 'table-summary');
   summDiv.appendChild( document.createTextNode(e.summary) );
 
   const eventDiv = document.createElement('div');
-  eventDiv.classList.add('row', 'align-items-center', 'mb-3');
+  eventDiv.classList.add('row', 'align-items-center', 'mb-3', 'table-entry');
   eventDiv.appendChild( timeDiv );
   eventDiv.appendChild( summDiv );
 

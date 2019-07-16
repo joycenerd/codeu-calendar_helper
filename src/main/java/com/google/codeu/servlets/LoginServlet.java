@@ -45,12 +45,12 @@ public class LoginServlet extends HttpServlet {
 
       if( request.getSession().getAttribute("authorized") == null ||
           !((boolean) request.getSession().getAttribute("authorized")) ){
-        response.sendRedirect("/credential?referer=/login");  
+        response.sendRedirect("/dashboard/credential");  
         return;
       }
       
-      // If the user has already authorized, redirect to their page
-      response.sendRedirect("/user-page.html?user=" + user);  
+      // If the user has already authorized, redirect to dashboard
+      response.sendRedirect("/dashboard.html");  
       return;
     }
 
