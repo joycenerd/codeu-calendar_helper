@@ -439,7 +439,7 @@ h6 {
 /* price section */
 
 #price {
-	background: url("https://cdn.pixabay.com/photo/2015/06/08/15/11/typewriter-801921_960_720.jpg") fixed;
+	background-color: #4a47d5;
 	background-repeat: no-repeat;
 	background-size: cover;
 	padding-top: 100px;
@@ -451,7 +451,7 @@ h6 {
 	font-style: normal;
 	text-transform: none;
 	text-decoration: none;
-	color: #4a47d5;
+	color: #fff;
 }
 
 #price p {
@@ -459,7 +459,7 @@ h6 {
 	font-style: normal;
 	text-transform: none;
 	text-decoration: none;
-	color: #4a47d5;
+	color: #c2d0da;
 	font-weight: normal;
 	font-size: 18px;
 }
@@ -471,10 +471,10 @@ h6 {
 	font-family: 'Lato', Helvetica, Arial, Lucida, sans-serif;
 	color: rgb(48, 48, 48);
 	padding: 1.2em 30px 1.2em 75px;
-	border-left: 8px solid #4a47d5;
 	line-height: 1.6;
 	position: relative;
 	background: #EDEDED;
+	box-shadow: 10px 12px 0.5rem rgba(0, 0, 0, 0.5);
 }
 
 #price blockquote span {
