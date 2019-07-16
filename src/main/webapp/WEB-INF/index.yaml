@@ -18,3 +18,20 @@ indexes:
   - name: user
   - name: timestamp
     direction: desc
+
+- kind: Tag
+  properties:
+  - name: id
+  - name: userId
+  - name: tag
+  - name: eventDateTime
+  - name: timestamp
+    direction: desc
+
+- kind: Message
+  properties:
+  - name: id
+  - name: userId
+  - name: summary
+  - name: timestamp
+    direction: desc
