@@ -21,17 +21,11 @@ indexes:
 
 - kind: Tag
   properties:
-  - name: id
   - name: userId
-  - name: tag
-  - name: eventDateTime
   - name: timestamp
-    direction: desc
 
-- kind: Message
+- kind: Task
   properties:
-  - name: id
   - name: userId
-  - name: summary
   - name: timestamp
-    direction: desc
+
