@@ -156,10 +156,14 @@ $(document).ready(function() {
   $("#table-sample").on('shown.bs.popover', function(){
       $('#table-form').off('focusout')
                       .focusout(function(){
-          $('#table-sample').popover('hide');
           setTimeout( function(){
-              $("#table-sample").toggleClass('d-none');
-              }, 50);
+            console.log($('#table-form input:focus #table-form textarea:focus').length);
+            if( $('#table-form input:focus, #table-form textarea:focus').length != 0 ) return;
+            $('#table-sample').popover('hide');
+            setTimeout( function(){
+                $("#table-sample").toggleClass('d-none');
+                }, 50);
+          }, 0);
           });
       });
   
@@ -254,7 +258,7 @@ function buildTimetableEntry( e ) {
   var content = [ '<div class="row">',
                   '<div class="col">',
                   startTime.toLocaleTimeString("default"),
-                  '</div><div class="col">',
+                  '</div><span>~</span><div class="col">',
                   endTime.toLocaleTimeString("default"),
                   '</div></div><div class="row"><div class="col">',
                   description,
@@ -275,6 +279,7 @@ function buildTableSampleTemplate(){
   return ['<div class="container popover" role="tooltip">',
             '<div class="arrow"></div>',
             '<form id="table-form" class="container">',
+            '<input type="hidden" name="calendar" value="primary" >',
             '<div class="row"><div class="popover-header col"></div></div>',
             '<div class="row"><div class="popover-body col"></div></div>',
             '</form>',
@@ -291,6 +296,6 @@ function buildTableSampleContent(){
               '<textarea name="description" placeholder="description"></textarea>',
             '</div>',
             '<div class="row">',
-              '<textarea name="tags" placeholder="tags"></textarea>',
+              '<input type="text" name="tags" placeholder="tags">',
             '</div>'].join('');
 }
