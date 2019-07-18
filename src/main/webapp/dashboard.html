@@ -11,25 +11,39 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/css/mdb.min.css" rel="stylesheet">
+    <!-- Bootstrap js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
     <!-- New font family-->
     <link href="https://fonts.googleapis.com/css?family=Istok+Web|Muli:700&display=swap" rel="stylesheet">
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <!-- Bootstrap js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="js/datetimepicker.js"></script>
     <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#picker').dateTimePicker(null, "startDateTime");
-            $('#picker-no-time').dateTimePicker(null, "endDateTime"); //Because the new endDateTime would be earlier than startDateTime, if user change the startDateTime
-            //$('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "endDateTime");
+            $('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "startDateTime");
+            $('#picker').dateTimePicker(null, "endDateTime");
+            $("#sub").click(function (event) {
+                event.preventDefault();
+                $.post("/dashboard/calendar", $("#tag-form").serializeArray(), function (data) {
+                    console.log(data);
+                    if (data.error != null) window.location.replace(data.to);
+                }, "json")
+                    .fail(function (err) {
+                        console.log(err);
+                    });
+            });
+
         })
     </script>
     <link href="/css/datetimepicker.css" rel="stylesheet">
@@ -43,7 +57,7 @@
     <div id='cssmenu'>
         <ul>
             <li class='active'><a href='#'><span>Home</span></a></li>
-            <li><a href='#'><span>Calendar</span></a></li>
+            <li><a href='https://calendar.google.com/calendar/'><span>Calendar</span></a></li>
             <li><a href='#'><span>Time Table</span></a></li>
             <li><a href='#'><span>Today Tasks</span></a></li>
             <li class='last'><a href='/taglist.html'><span>Tag List</span></a></li>
@@ -102,16 +116,19 @@
                             </tr>
                             <tr id="rowId">
 
-                                <td><input id="tagbox1" name="tags" type="text" value="2" size="17%" /></td>
-                                <td><input id="textbox1" name="summary" type="text" value="12" /></td>
+                                <td><input id="tagbox1" name="tags" type="text" size="17%" /></td>
+                                <td><input id="textbox1" name="summary" type="text" /></td>
 
                                 <div style="width: 200px; margin: 50px auto;">
-                                    <div style="width: 250px; margin: 50px auto;">
-                                        Start:<div id="picker"> </div>
-                                    </div>
                                     <div style="width: 250px; margin: 20px auto;">
-                                        End:<div id="picker-no-time"></div>
+                                        Start:<div id="picker-no-time"></div>
+                                        <input type="hidden" id="result" />
                                     </div>
+                                    <div style="width: 250px; margin: 50px auto;">
+                                        End:<div id="picker"> </div>
+                                        <input type="hidden" id="result2" />
+                                    </div>
+
                                 </div>
 
                             </tr>
@@ -120,10 +137,10 @@
                         <input type='button' value='Get tag Value' id='getButtonValue'><br>
                         Enter description with tags:
                         <br />
-                        <input type="text" value="it's just an example" name="description">
+                        <input type="text" name="description">
                         <br />
                         <input type="hidden" name="from" value="dashboard.html">
-                        <input type="submit" class="btn btn-primary" value="Submit">
+                        <input id="sub" type="submit" class="btn btn-primary" value="Submit">
                     </form>
                 </div>
             </div>
