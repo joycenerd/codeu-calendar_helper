@@ -1,3 +1,5 @@
+//Global variables
+
 // tag
 $('#draggable-1').draggable({
   cursor: "move"
@@ -133,6 +135,37 @@ $(function () {
 //JQuery
 $(document).ready(function() { 
 
+  //timeTable
+  loadTimetable();
+
+  $("#table-sample").popover({
+        template: buildTableSampleTemplate(),
+        html: true,
+        title: '<input type="text" name="summary" placeholder="New Event">',
+        content: buildTableSampleContent(),
+        placement: 'auto',
+        trigger: 'manual'
+      }).toggleClass('d-none');
+
+  $("#timeTable").dblclick(function(){
+      $("#table-sample").toggleClass('d-none');
+      $('#table-sample').popover('show');
+      $('[name="summary"]').focus();
+      });
+
+  $("#table-sample").on('shown.bs.popover', function(){
+      $('#table-form').off('focusout')
+                      .focusout(function(){
+          $('#table-sample').popover('hide');
+          setTimeout( function(){
+              $("#table-sample").toggleClass('d-none');
+              }, 50);
+          });
+      });
+  
+  $("#table-sample").on('hide.bs.popover', function(){
+      });
+
   //Timetable sumit
   $("#submit").click(function( event ){
       event.preventDefault();
@@ -143,10 +176,8 @@ $(document).ready(function() {
           console.log(err);
           });
       });
-});
 
-//timeTable
-loadTimetable();
+});
 
 function loadTimetable(){
   var start = new Date();
@@ -185,6 +216,7 @@ function loadTimetable(){
 function buildTimetableEntry( e ) {
   const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
   const startTime = new Date(e.start.dateTime);
+  const endTime = new Date(e.end.dateTime);
   var $start = $(document.createElement('div'))
                 .addClass('row')
                 .append( $(document.createElement('div'))
@@ -200,7 +232,7 @@ function buildTimetableEntry( e ) {
                       );
 
   var $time = $(document.createElement('div'))
-                .addClass('col-3 pr-0 table-time')
+                .addClass('col-4 pr-0 table-time')
                 .append( $start )
                 .append( $end );
 
@@ -208,10 +240,57 @@ function buildTimetableEntry( e ) {
                   .addClass('col text-turncate table-summary')
                   .text( e.summary );
 
-  var $event = $(document.createElement('div'))
-                  .addClass('row align-items-center mb-3 table-entry')
+  var $event = $(document.createElement('a'))
+                  .attr("role", "button")
+                  .attr("tabindex", "0")  //tabindex==0 so that this DOM will be focusable but not change the tab order
+                  .addClass('row align-items-center p-1 m-1 mb-2 table-entry')
                   .append( $time )
-                  .append( $summary );
+                  .append( $summary )
+                  .data( e );
+
+  //Also useful in phon/email link
+  var description = Autolinker.link(e.description.replace('#*', '') );
+
+  var content = [ '<div class="row">',
+                  '<div class="col">',
+                  startTime.toLocaleTimeString("default"),
+                  '</div><div class="col">',
+                  endTime.toLocaleTimeString("default"),
+                  '</div></div><div class="row"><div class="col">',
+                  description,
+                  '</div></div>'].join('');
+
+  $event.popover({
+        html: true,
+        title: e.summary,
+        content: content,
+        placement: 'auto',
+        trigger: 'focus'
+      });
 
   return $event;
+}
+
+function buildTableSampleTemplate(){
+  return ['<div class="container popover" role="tooltip">',
+            '<div class="arrow"></div>',
+            '<form id="table-form" class="container">',
+            '<div class="row"><div class="popover-header col"></div></div>',
+            '<div class="row"><div class="popover-body col"></div></div>',
+            '</form>',
+          '</div>'].join('');
+}
+
+function buildTableSampleContent(){
+  return ['<div class="row">',
+              '<input class="col" name="startDateTime">',
+              '<span>~</span>',
+              '<input class="col" name="endDateTime">',
+            '</div>',
+            '<div class="row">',
+              '<textarea name="description" placeholder="description"></textarea>',
+            '</div>',
+            '<div class="row">',
+              '<textarea name="tags" placeholder="tags"></textarea>',
+            '</div>'].join('');
 }
