@@ -197,9 +197,6 @@ public class CalendarServlet extends HttpServlet {
       @param endDateTime: end date time in RFC3339 format
       //@param endDate: end date
       //@param endTime: end time  - null for whole day event 
-      @param tags: Event tags, which will be stored in description as #abc or #[String].
-                   Please use comma to seperate.
-                   E.g. tags=a,b,c -> it would be processed as "#a #b #c" into description.
       
       optional - 
       @param calendar:  The name of calendar that user wants to update/insert.
@@ -208,6 +205,9 @@ public class CalendarServlet extends HttpServlet {
       @param description: Event description.
       @param timezone: timezone of this event, default would be the user's time zone
                        The time zone in which the time is specified. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) For recurring events this field is required and specifies the time zone in which the recurrence is expanded. For single events this field is optional and indicates a custom time zone for the event start/end.
+      @param tags: Event tags, which will be stored in description as #abc or #[String].
+                   Please use comma to seperate.
+                   E.g. tags=a,b,c -> it would be processed as "#a #b #c" into description.
 
       @return - printed in the site
         Succeed - an event's details
@@ -250,12 +250,17 @@ public class CalendarServlet extends HttpServlet {
 
     System.out.println("calendarID = " + calendarID);
 
+    if( checkParam(request, "summary") == false ){
+      throw new IllegalArgumentException("Missed summary in Calendar POST request");
+    }
     String eventSummary = Jsoup.clean( request.getParameter("summary"), Whitelist.none());
-    String[] tags = Jsoup.clean( request.getParameter("tags"), Whitelist.none()).split("\\s*,\\s*"); //regex expression for "   ,   " or ","
+    String[] tags = {};
+    if( checkParam(request, "tags") ) tags = Jsoup.clean( request.getParameter("tags"), Whitelist.none()).split("\\s*,\\s*"); //regex expression for "   ,   " or ","
+    if( checkParam(request, "description") == false ){
+      throw new IllegalArgumentException("Missed description in Calendar POST request");
+    }
     StringBuilder description = new StringBuilder( Jsoup.clean( request.getParameter("description"), Whitelist.none()) );
     Arrays.asList(tags).forEach((tag) -> description.append(" #"+tag));
-
-    System.out.println("description = " + description.toString() );
 
     Event event = new Event()
                   .setSummary( eventSummary)
