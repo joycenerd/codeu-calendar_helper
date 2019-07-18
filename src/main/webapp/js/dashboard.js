@@ -171,14 +171,12 @@ function loadTimetable(){
       });
       events.sort(function(a,b){ 
       return new Date(a.start.dateTime) - new Date(b.start.dateTime)});
-      const timeTableContext = document.getElementById('timeTableContext');
-      while(timeTableContext.lastChild){
-        timeTableContext.removeChild(timeTableContext.lastChild);
-      }
+      var $timeTableContext = $("#timeTableContext")
+                                .html("");
       events.forEach(( e ) => {
           if(e.start.dateTime != null){
             const eventDiv = buildTimetableEntry( e );
-            timeTableContext.appendChild(eventDiv);
+            $timeTableContext.append(eventDiv);
           }
           });
       });
@@ -187,34 +185,33 @@ function loadTimetable(){
 function buildTimetableEntry( e ) {
   const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
   const startTime = new Date(e.start.dateTime);
-  const startColDiv = document.createElement('div');
-  startColDiv.classList.add('col');
-  startColDiv.appendChild( document.createTextNode(startTime.toLocaleTimeString("default", options)) );
-  const startDiv = document.createElement('div');
-  startDiv.appendChild(startColDiv);
-  startDiv.classList.add('row');
+  var $start = $(document.createElement('div'))
+                .addClass('row')
+                .append( $(document.createElement('div'))
+                          .addClass('col')
+                          .text(startTime.toLocaleTimeString("default", options))
+                        );
 
-  const endTime = new Date(e.end.dateTime);
-  const endColDiv = document.createElement('div');
-  endColDiv.classList.add('col');
-  endColDiv.appendChild( document.createTextNode(endTime.toLocaleTimeString("default", options)) );
-  const endDiv = document.createElement('div');
-  endDiv.appendChild(endColDiv);
-  endDiv.classList.add('row');
+  var $end = $(document.createElement('div'))
+              .addClass('row')
+              .append( $(document.createElement('div'))
+                          .addClass('col')
+                          .text(endTime.toLocaleTimeString("default", options))
+                      );
 
-  const timeDiv = document.createElement('div');
-  timeDiv.classList.add('col-3', 'pr-0', 'table-time');
-  timeDiv.appendChild( startDiv );
-  timeDiv.appendChild( endDiv );
+  var $time = $(document.createElement('div'))
+                .addClass('col-3 pr-0 table-time')
+                .append( $start )
+                .append( $end );
 
-  const summDiv = document.createElement('div');
-  summDiv.classList.add('col', 'text-turncate', 'table-summary');
-  summDiv.appendChild( document.createTextNode(e.summary) );
+  var $summary = $(document.createElement('div'))
+                  .addClass('col text-turncate table-summary')
+                  .text( e.summary );
 
-  const eventDiv = document.createElement('div');
-  eventDiv.classList.add('row', 'align-items-center', 'mb-3', 'table-entry');
-  eventDiv.appendChild( timeDiv );
-  eventDiv.appendChild( summDiv );
+  var $event = $(document.createElement('div'))
+                  .addClass('row align-items-center mb-3 table-entry')
+                  .append( $time )
+                  .append( $summary );
 
-  return eventDiv;
+  return $event;
 }
