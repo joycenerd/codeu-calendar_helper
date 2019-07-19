@@ -141,7 +141,7 @@ $(document).ready(function() {
   $("#table-sample").popover({
         template: buildTableSampleTemplate(),
         html: true,
-        title: '<input type="text" name="summary" placeholder="New Event">',
+        title: '<input class="form-control form-control-lg" type="text" name="summary" placeholder="New Event" required />',
         content: buildTableSampleContent(),
         placement: 'auto',
         trigger: 'manual'
@@ -153,22 +153,16 @@ $(document).ready(function() {
       $('[name="summary"]').focus();
       });
 
-  $("#table-sample").on('shown.bs.popover', function(){
-      $('#table-form').off('focusout')
-                      .focusout(function(){
-          setTimeout( function(){
-            console.log($('#table-form input:focus #table-form textarea:focus').length);
-            if( $('#table-form input:focus, #table-form textarea:focus').length != 0 ) return;
-            $('#table-sample').popover('hide');
-            setTimeout( function(){
-                $("#table-sample").toggleClass('d-none');
-                }, 50);
-          }, 0);
-          });
-      });
-  
   $("#table-sample").on('hide.bs.popover', function(){
+      $('#table-form').off('focusout');
       });
+
+  $("#table-sample").on('show.bs.popover', function(){
+      setTimeout( function(){
+          initSamplePopover();
+      }, 0);
+  });
+  
 
   //Timetable sumit
   $("#submit").click(function( event ){
@@ -253,7 +247,8 @@ function buildTimetableEntry( e ) {
                   .data( e );
 
   //Also useful in phon/email link
-  var description = Autolinker.link(e.description.replace('#*', '') );
+  var description = "";
+  if(e.description != undefined) description = Autolinker.link(e.description.replace('#*', '') );
 
   var content = [ '<div class="row">',
                   '<div class="col">',
@@ -278,8 +273,7 @@ function buildTimetableEntry( e ) {
 function buildTableSampleTemplate(){
   return ['<div class="container popover" role="tooltip">',
             '<div class="arrow"></div>',
-            '<form id="table-form" class="container">',
-            '<input type="hidden" name="calendar" value="primary" >',
+            '<form id="table-form">',
             '<div class="row"><div class="popover-header col"></div></div>',
             '<div class="row"><div class="popover-body col"></div></div>',
             '</form>',
@@ -287,15 +281,105 @@ function buildTableSampleTemplate(){
 }
 
 function buildTableSampleContent(){
-  return ['<div class="row">',
-              '<input class="col" name="startDateTime">',
-              '<span>~</span>',
-              '<input class="col" name="endDateTime">',
+  var now = new Date();
+  const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
+  $('#table-sample-start').text( now.toLocaleTimeString( "default", options ));
+  $('#table-sample-end').text(now.toLocaleTimeString( "default", options ));
+  $('#table-sample-summary').text('...');
+  return ['<div class="row" id="startDateTime">',
+              '<input class="form-control year col" type="text" value="',now.getFullYear(),'" required />',
+              '<span>/</span>',
+              '<input class="form-control month col" type="text" value="',now.getMonth(),'" required />',
+              '<span>/</span>',
+              '<input class="form-control date col" type="text" value="',now.getDate(),'" required />',
+              '<input class="form-control hours col" type="text" value="',now.getHours(),'" required />',
+              '<input class="form-control minutes col" type="text" value="',now.getMinutes(),'" required />',
+              '<input type="hidden" name="startDateTime" value="',now.toISOString(),'">',
+            '</div><div class="row" id="endDateTime">',
+              '<input class="form-control year col" type="text" value="',now.getFullYear(),'" required />',
+              '<span>/</span>',
+              '<input class="form-control month col" type="text" value="',now.getMonth(),'" required />',
+              '<span>/</span>',
+              '<input class="form-control date col" type="text" value="',now.getDate(),'" required />',
+              '<input class="form-control hours col" type="text" value="',now.getHours(),'" required />',
+              '<input class="form-control minutes col" type="text" value="',now.getMinutes(),'" required />',
+              '<input type="hidden" name="endDateTime" value="',now.toISOString(),'">',
             '</div>',
             '<div class="row">',
-              '<textarea name="description" placeholder="description"></textarea>',
+              '<div class="form-group col">',
+                '<label for="table-form-desc">Description</label>',
+                '<textarea class="form-control" name="description" id="table-form-desc" placeholder="description"></textarea>',
+              '</div>',
             '</div>',
             '<div class="row">',
-              '<input type="text" name="tags" placeholder="tags">',
+              '<div class="form-group col">',
+                '<label for="table-form-tags">Tags</label>',
+                '<input class="form-control" type="text" name="tags" id="table-form-tags" placeholder="tags">',
+              '</div>',
+            '</div>',
+            '<div class="row">',
+              '<div class="col">',
+                '<input type="submit" class="btn btn-primary" id="table-submit" tabindex="0">Store</button>',
+              '</div>',
             '</div>'].join('');
+}
+
+function initSamplePopover(){
+  $('#table-form').focusout(function(){
+      setTimeout( function(){
+          if( $('#table-form input:focus, #table-form textarea:focus').length != 0 ) return;
+          $('#table-sample').popover('hide');
+          setTimeout( function(){
+              $("#table-sample").toggleClass('d-none');
+              }, 50);
+          }, 0);
+      });
+  $('#table-form [name="summary"]').change(function(){
+      $('#table-sample-summary').text( $(this).val() );
+      });
+  $('#startDateTime input, #endDateTime input').change(function(){
+      const $dateTime = $(this).parent();
+      var date = new Date(  parseInt($dateTime.find('input.year').val() ),
+          parseInt($dateTime.find('input.month').val() ),
+          parseInt($dateTime.find('input.date').val() ),
+          parseInt($dateTime.find('input.hours').val() ),
+          parseInt($dateTime.find('input.minutes').val() ),
+          );
+      if( isNaN(date) ){
+        if($dateTime.attr('id')[0] == 's'){
+          $('#table-sample-start').text( "" );
+        }
+        else {
+          $('#table-sample-start').text( "" );
+        }
+      return;
+      }
+      $dateTime.find('input[type="hidden"]').attr( 'value', date.toISOString() );
+      const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
+      if($dateTime.attr('id')[0] == 's'){
+        $('#table-sample-start').text( date.toLocaleTimeString("default", options) );
+      }
+      else{
+        $('#table-sample-end').text( date.toLocaleTimeString("default", options) );
+      }
+  });
+  $("#table-submit").click(function( event ){
+      event.preventDefault();
+      var startDateTime = new Date( $('#startDateTime [type="hidden"]').val() );
+      var endDateTime   = new Date( $('#endDateTime [type="hidden"]').val() );
+      if( startDateTime >= endDateTime ){
+        alert("Invalid date time.");
+        return;
+      }
+      $.post("/dashboard/calendar", $("#table-form").serializeArray(), function(data){
+          console.log(data);
+          if(data.error != null) window.location.replace(data.to);
+          $('#table-form').focusout();
+          const eventDiv = buildTimetableEntry( data );
+          $timeTableContext.append(eventDiv);
+          }, "json")
+      .fail(function(err){
+          console.log(err);
+          });
+      });
 }
