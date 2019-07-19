@@ -42,8 +42,14 @@
                     .fail(function (err) {
                         console.log(err);
                     });
+                $.post("/dashboard/tagManage", $("#tag-form").serializeArray(), function (data) {
+                    console.log(data);
+                    if (data.error != null) window.location.replace(data.to);
+                }, "json")
+                    .fail(function (err) {
+                        console.log(err);
+                    });
             });
-
         })
     </script>
     <link href="/css/datetimepicker.css" rel="stylesheet">
@@ -56,7 +62,7 @@
 <body>
     <div id='cssmenu'>
         <ul>
-            <li class='active'><a href='#'><span>Home</span></a></li>
+            <li class='active'><a href='https://su19-codeu-49-8204.appspot.com/'><span>Home</span></a></li>
             <li><a href='https://calendar.google.com/calendar/'><span>Calendar</span></a></li>
             <li><a href='#'><span>Time Table</span></a></li>
             <li><a href='#'><span>Today Tasks</span></a></li>
@@ -102,7 +108,7 @@
             <div id="draggable-1" class="card">
                 <h5 class="card-header primary-color white-text">#Tag</h5>
                 <div class="card-body">
-                    <form id="tag-form" action="/dashboard/calendar" method="POST" class="hidden">
+                    <form id="tag-form" action="/dashboard/calendar" method="POST" class="hidden" name="Form1">
                         <table rules="all" style="background:#fff;">
                             <tr>
                                 <td style="font-size:14px;">Tags:</td>
@@ -140,28 +146,37 @@
                         <input type="text" name="description">
                         <br />
                         <input type="hidden" name="from" value="dashboard.html">
-                        <input id="sub" type="submit" class="btn btn-primary" value="Submit">
+                        <input id="sub" type="submit" class="btn btn-primary" value="Submit"
+                            onclick="return OnButton1();">
                     </form>
                 </div>
             </div>
 
-            <div id="draggable-2" class="card">
-                <h5 class="card-header deep-orange white-text">#Tag</h5>
+            <div id="draggable-2" class="card" onload="buildUI()">
+                <h5 cclass="card-header success-color white-text">Tag search</h5>
                 <div class="card-body">
-                    <p class="card-text">Content</p>
+                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.."
+                        title="Type in a name">
+                    <div id="tag-container" class="container align-middle text-monospace">
+                        <ul id="myUL"></ul>
+                    </div>
                 </div>
             </div>
-            <div id="draggable-3" class="card">
+
+
+            <div id="draggable-3" class="card" onload="buildUIshowtags()">
                 <h5 class="card-header success-color white-text">#Tag</h5>
-                <div class="card-body">
-                    <p class="card-text">Content</p>
+                <div class="card-body" id="card-body-withtags">Loading...
                 </div>
+                <div class="result"></div>
             </div>
 
 
         </div>
     </div>
     <script src="/js/dashboard.js"></script>
+    <script src="/js/showtags.js"></script>
+    <script src="/js/searchTags.js"></script>
 </body>
 
 </html>
