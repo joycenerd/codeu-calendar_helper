@@ -189,7 +189,6 @@ public class CalendarServlet extends HttpServlet {
   /*
       Only accept one event/calendar update at one time.
       Value regulation: only accept plain text. //Would process here, just remind you whether you want to tell the user about it.
-      @param from: This POST is from which site. E.g. "/index.html" or "/testabc.html"
       @param summary: Event title/summary.
       @param startDateTime: start date time in RFC3339 format
       //@param startDate: start date  
@@ -256,9 +255,6 @@ public class CalendarServlet extends HttpServlet {
     String eventSummary = Jsoup.clean( request.getParameter("summary"), Whitelist.none());
     String[] tags = {};
     if( checkParam(request, "tags") ) tags = Jsoup.clean( request.getParameter("tags"), Whitelist.none()).split("\\s*,\\s*"); //regex expression for "   ,   " or ","
-    if( checkParam(request, "description") == false ){
-      throw new IllegalArgumentException("Missed description in Calendar POST request");
-    }
     StringBuilder description = new StringBuilder( Jsoup.clean( request.getParameter("description"), Whitelist.none()) );
     Arrays.asList(tags).forEach((tag) -> description.append(" #"+tag));
 
