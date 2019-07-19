@@ -166,6 +166,9 @@ public class Datastore {
 
     datastore.put(taskEntity);
   }
+  public void deleteTask(Task task) {
+    deleteTask(task.getId());
+  }
   public void deleteTask(UUID taskId) {
     datastore.delete(KeyFactory.createKey("Task", taskId.toString()));
   }
@@ -217,6 +220,9 @@ public class Datastore {
       throw new IllegalArgumentException("Invalid TagEntity for update.");
     }  
     datastore.put( tagEntity );
+  }
+  public void deleteTag(Tag tag) {
+    deleteTag(tag.getId());
   }
   public void deleteTag(UUID tagId) {
     datastore.delete(KeyFactory.createKey("Tag", tagId.toString()));

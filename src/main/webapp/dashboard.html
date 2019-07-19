@@ -11,6 +11,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/css/mdb.min.css" rel="stylesheet">
+    <!-- New font family-->
+    <link href="https://fonts.googleapis.com/css?family=Istok+Web|Muli:700&display=swap" rel="stylesheet">
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <!-- Bootstrap js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
@@ -18,12 +23,10 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
-    <!-- New font family-->
-    <link href="https://fonts.googleapis.com/css?family=Istok+Web|Muli:700&display=swap" rel="stylesheet">
-    <!-- JQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- 'Autolinker.js' or 'Autolinker.min.js' - non-minified is better for
+     debugging, minified is better for users' download time -->
+    <script src="js/Autolinker.js/dist/Autolinker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment-with-locales.min.js"></script>
@@ -94,14 +97,26 @@
                         alt="Card image cap">
                     <div class="card-body" id="timeTable">
                         <div class="row">
-                            <h4 class="card-title col" id="timeTableTitle"><a>Timetable</a></h4>
+                            <h4 class="card-title col ml-1" id="timeTableTitle"><a>Timetable</a></h4>
                         </div>
                         <div class="row align-items-center">
                             <div class="card-text col" id="timeTableContext">
                             </div>
                         </div>
                         <div class="row">
-                            <a href="#" class="btn btn-primary col">Details</a>
+                            <div class="card-text col">
+                              <a role="button" class="row align-items-center p-1 m-1" tabindex="0" id="table-sample">
+                                <div class="col-4 pr-0 table-sample-time">
+                                  <div class="row">
+                                    <div class="col" id="table-sample-start"></div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col" id="table-sample-end"></div>
+                                  </div>
+                                </div>
+                                <div class="col text-turncate" id="table-sample-summary"></div>
+                              </a>
+                            </div>
                         </div>
                     </div>
                 </div>

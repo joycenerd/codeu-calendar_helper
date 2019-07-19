@@ -18,3 +18,14 @@ indexes:
   - name: user
   - name: timestamp
     direction: desc
+
+- kind: Tag
+  properties:
+  - name: userId
+  - name: timestamp
+
+- kind: Task
+  properties:
+  - name: userId
+  - name: timestamp
+
