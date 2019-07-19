@@ -2,21 +2,21 @@
 function fetchMessages() {
   const url = '/feed';
   fetch(url)
-      .then((response) => {
-        return response.json();
-      })
-      .then((messages) => {
-        const messageContainer = document.getElementById('message-container');
-        if (messages.length == 0) {
-          messageContainer.innerHTML = '<p>There are no posts yet.</p>';
-        } else {
-          messageContainer.innerHTML = '';
-        }
-        messages.forEach((message) => {
-          const messageDiv = buildMessageDiv(message);
-          messageContainer.appendChild(messageDiv);
-        });
+    .then((response) => {
+      return response.json();
+    })
+    .then((messages) => {
+      const messageContainer = document.getElementById('message-container');
+      if (messages.length == 0) {
+        messageContainer.innerHTML = '<p>There are no posts yet.</p>';
+      } else {
+        messageContainer.innerHTML = '';
+      }
+      messages.forEach((message) => {
+        const messageDiv = buildMessageDiv(message);
+        messageContainer.appendChild(messageDiv);
       });
+    });
 }
 
 function buildMessageDiv(message) {
@@ -48,7 +48,7 @@ function buildMessageDiv(message) {
 
   const messageDiv = document.createElement('div');
   messageDiv.classList.add(
-      'row', 'border-0', 'rounded', 'shadow', 'mb-3', 'bg-light');
+    'row', 'border-0', 'rounded', 'shadow', 'mb-3', 'bg-light');
   messageDiv.appendChild(messageInnerDiv);
 
   return messageDiv;

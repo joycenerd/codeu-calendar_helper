@@ -33,18 +33,32 @@
         $(document).ready(function () {
             $('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "startDateTime");
             $('#picker').dateTimePicker(null, "endDateTime");
-            $("#sub").click(function (event) {
+            $("#table-submit").click(function (event) {
                 event.preventDefault();
-                $.post("/dashboard/calendar", $("#tag-form").serializeArray(), function (data) {
+                var eventData = $('#table-form').serializeArray();
+                var startDateTime = new Date(eventData.find(o => o.name === 'startDateTime').value);
+                var endDateTime = new Date(eventData.find(o => o.name === 'endDateTime').value);
+                if (startDateTime >= endDateTime) {
+                    alert("Invalid date time.");
+                    return;
+                }
+                $.post("/dashboard/calendar", eventData, function (data) {
                     console.log(data);
                     if (data.error != null) window.location.replace(data.to);
-                }, "json")
-                    .fail(function (err) {
-                        console.log(err);
-                    });
-                $.post("/dashboard/tagManage", $("#tag-form").serializeArray(), function (data) {
-                    console.log(data);
-                    if (data.error != null) window.location.replace(data.to);
+                    var tagData = {
+                        method: 'update',
+                        eventDateTime: eventData.find(o => o.name === 'startDateTime').value
+                    };
+                    for (const tag of eventData.find(o => o.name === 'tags').value.split(/[\s,]+/)) {
+                        tagData.tag = tag;
+                        console.log(tagData);
+                        $.post("/dashboard/tagManage", tagData, function (response) {
+                            console.log(response);
+                            if (response.error != null) window.location.replace(data.to);
+                        });
+                    };
+                    $('#table-form').focusout();
+                    loadTimetable();    //Here should be modified to adding animatedly
                 }, "json")
                     .fail(function (err) {
                         console.log(err);
@@ -59,17 +73,20 @@
     <title>dashboard</title>
 </head>
 
-<body>
+<body onload="fetchTags(); getTags();">
     <div id='cssmenu'>
         <ul>
-            <li class='active'><a href='https://su19-codeu-49-8204.appspot.com/'><span>Home</span></a></li>
-            <li><a href='https://calendar.google.com/calendar/'><span>Calendar</span></a></li>
-            <li><a href='#'><span>Time Table</span></a></li>
-            <li><a href='#'><span>Today Tasks</span></a></li>
-            <li class='last'><a href='/taglist.html'><span>Tag List</span></a></li>
+            <li class='active'><a href='https://su19-codeu-49-8204.appspot.com/'><span><i class="fas fa-home"></i>&nbsp;
+                        Home</span></a></li>
+            <li><a href='https://calendar.google.com/calendar/'><span><i class="fa fa-book fa-fw"
+                            aria-hidden="true"></i>&nbsp; Calendar</span></a></li>
+            <li><a href='#'><span><i class="fas fa-tasks"></i>&nbsp; Time Table</span></a></li>
+            <li><a href='#'><span><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>&nbsp; Today Tasks</span></a>
+            </li>
+            <li class='last'><a href='/taglist.html'><span><i class="fas fa-tag"></i>&nbsp; Tag List</span></a></li>
         </ul>
     </div>
-    <div class="container">
+    <div class=" container">
         <div class="row">
             <div class="col-md-3">
                 <div id="draggable-handle" class="card">
@@ -105,16 +122,21 @@
                     </div>
                 </div>
             </div>
-            <div id="draggable-1" class="card">
+            <div id="draggable-1" class="card" style="width: 460px;">
                 <h5 class="card-header primary-color white-text">#Tag</h5>
-                <div class="card-body">
-                    <form id="tag-form" action="/dashboard/calendar" method="POST" class="hidden" name="Form1">
+                <div class="card-body-tag">
+                    <form id="table-form" action="/dashboard/calendar" method="POST" class="hidden" name="Form1">
                         <table rules="all" style="background:#fff;">
                             <tr>
-                                <td style="font-size:14px;">Tags:</td>
-                                <td style="font-size:14px;">Event summary:</td>
-                                <td><span
-                                        style="font:normal 12px agency, arial; color:blue; text-decoration:underline; cursor:pointer;"
+                                <td
+                                    style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;">
+                                    Tags:</td>
+                                <td
+                                    style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;">
+                                    Event summary:</td>
+                                <td>
+                                    <i class="fas fa-plus"></i><span
+                                        style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;"
                                         onclick="addMoreRows(this.form);">
                                         Add More
                                     </span>
@@ -134,39 +156,40 @@
                                         End:<div id="picker"> </div>
                                         <input type="hidden" id="result2" />
                                     </div>
-
                                 </div>
-
                             </tr>
                         </table>
                         <div id="addedRows"></div>
-                        <input type='button' value='Get tag Value' id='getButtonValue'><br>
+                        <a class="btn btn-default btn-sm" id='getButtonValue'>
+                            <i class="fas fa-user-tag"></i> Get tag Value</a><br>
                         Enter description with tags:
                         <br />
                         <input type="text" name="description">
-                        <br />
                         <input type="hidden" name="from" value="dashboard.html">
-                        <input id="sub" type="submit" class="btn btn-primary" value="Submit"
-                            onclick="return OnButton1();">
+                        <input id="table-submit" type="submit" class="btn btn-primary" value="Submit">
                     </form>
                 </div>
             </div>
 
-            <div id="draggable-2" class="card" onload="buildUI()">
-                <h5 cclass="card-header success-color white-text">Tag search</h5>
-                <div class="card-body">
-                    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.."
-                        title="Type in a name">
+            <div id="draggable-2" class="card">
+                <h5 class="card-header purple white-text">#Tag search</h5>
+                <div class="card-body-search" id="search">
                     <div id="tag-container" class="container align-middle text-monospace">
+                        <div id="searchbar">
+                            <input type="text" id="myInput" class="form-control" onkeyup="myFunction()"
+                                placeholder="Search for...">
+                            <a href="https://calendar.google.com/calendar/" class="btn btn-secondary"><i
+                                    class="fas fa-search"></i>Search</a>
+                        </div>
                         <ul id="myUL"></ul>
                     </div>
                 </div>
             </div>
 
 
-            <div id="draggable-3" class="card" onload="buildUIshowtags()">
-                <h5 class="card-header success-color white-text">#Tag</h5>
-                <div class="card-body" id="card-body-withtags">Loading...
+            <div id="draggable-3" class="card">
+                <h5 class="card-header success-color white-text">#Tag View</h5>
+                <div class="card-body" id="card-body-withtags">
                 </div>
                 <div class="result"></div>
             </div>

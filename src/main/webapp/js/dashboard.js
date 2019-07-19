@@ -1,3 +1,5 @@
+//Global variables
+
 // tag
 $('#draggable-1').draggable({
     cursor: "move"
@@ -23,7 +25,7 @@ $('#draggable-handle').draggable({
 var rowCount = 2;
 var msg = '';
 function addMoreRows(frm) {
-    var recRow = '<p id="rowCount' + rowCount + '"><tr><td><input name="tagbox' + rowCount + '" id="tagbox' + rowCount + '" type="text" size="17%"  maxlength="120" /></td><td><input name="textbox' + rowCount + '" id="textbox' + rowCount + '" type="text"  maxlength="120" style="margin: 4px 5px 0 5px;"/></td></tr> <a href="javascript:void(0);" onclick="removeRow(' + rowCount + ');">Delete</a></p>';
+    var recRow = '<p id="rowCount' + rowCount + '"><tr><td><input name="tagbox' + rowCount + '" id="tagbox' + rowCount + '" type="text" size="17%"  maxlength="120" /></td><td><input name="textbox' + rowCount + '" id="textbox' + rowCount + '" type="text"  maxlength="120" style="margin: 4px 5px 0 5px;"/></td></tr> <a href="javascript:void(0);" color:rgb(255, 0, 191);" onclick="removeRow(' + rowCount + ');"><i class="fa fa-trash-o fa-lg"></i>Delete</a></p>';
     jQuery('#addedRows').append(recRow);
     rowCount++;
 }
@@ -133,6 +135,35 @@ $(function () {
 //JQuery
 $(document).ready(function () {
 
+    //timeTable
+    loadTimetable();
+
+    $("#table-sample").popover({
+        template: buildTableSampleTemplate(),
+        html: true,
+        title: '<input class="form-control form-control-lg" type="text" name="summary" placeholder="New Event" required />',
+        content: buildTableSampleContent(),
+        placement: 'auto',
+        trigger: 'manual'
+    }).toggleClass('d-none');
+
+    $("#timeTable").dblclick(function () {
+        $("#table-sample").toggleClass('d-none');
+        $('#table-sample').popover('show');
+        $('[name="summary"]').focus();
+    });
+
+    $("#table-sample").on('hide.bs.popover', function () {
+        $('#table-form').off('focusout');
+    });
+
+    $("#table-sample").on('show.bs.popover', function () {
+        setTimeout(function () {
+            initSamplePopover();
+        }, 0);
+    });
+
+
     //Timetable sumit
     $("#submit").click(function (event) {
         event.preventDefault();
@@ -143,10 +174,8 @@ $(document).ready(function () {
                 console.log(err);
             });
     });
-});
 
-//timeTable
-loadTimetable();
+});
 
 function loadTimetable() {
     var start = new Date();
@@ -172,14 +201,12 @@ function loadTimetable() {
             events.sort(function (a, b) {
                 return new Date(a.start.dateTime) - new Date(b.start.dateTime)
             });
-            const timeTableContext = document.getElementById('timeTableContext');
-            while (timeTableContext.lastChild) {
-                timeTableContext.removeChild(timeTableContext.lastChild);
-            }
+            var $timeTableContext = $("#timeTableContext")
+                .html("");
             events.forEach((e) => {
                 if (e.start.dateTime != null) {
                     const eventDiv = buildTimetableEntry(e);
-                    timeTableContext.appendChild(eventDiv);
+                    $timeTableContext.append(eventDiv);
                 }
             });
         });
@@ -187,35 +214,161 @@ function loadTimetable() {
 
 function buildTimetableEntry(e) {
     const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
-    const startTime = new Date(e.start.dateTime);
-    const startColDiv = document.createElement('div');
-    startColDiv.classList.add('col');
-    startColDiv.appendChild(document.createTextNode(startTime.toLocaleTimeString("default", options)));
-    const startDiv = document.createElement('div');
-    startDiv.appendChild(startColDiv);
-    startDiv.classList.add('row');
+    if (e.start.dateTime.value == undefined) {
+        var startTime = new Date(e.start.dateTime);
+        var endTime = new Date(e.end.dateTime);
+    } else {
+        var startTime = new Date(e.start.dateTime.value);
+        var endTime = new Date(e.end.dateTime.value);
+    }
+    var $start = $(document.createElement('div'))
+        .addClass('row')
+        .append($(document.createElement('div'))
+            .addClass('col')
+            .text(startTime.toLocaleTimeString("default", options))
+        );
 
-    const endTime = new Date(e.end.dateTime);
-    const endColDiv = document.createElement('div');
-    endColDiv.classList.add('col');
-    endColDiv.appendChild(document.createTextNode(endTime.toLocaleTimeString("default", options)));
-    const endDiv = document.createElement('div');
-    endDiv.appendChild(endColDiv);
-    endDiv.classList.add('row');
+    var $end = $(document.createElement('div'))
+        .addClass('row')
+        .append($(document.createElement('div'))
+            .addClass('col')
+            .text(endTime.toLocaleTimeString("default", options))
+        );
 
-    const timeDiv = document.createElement('div');
-    timeDiv.classList.add('col-3', 'pr-0', 'table-time');
-    timeDiv.appendChild(startDiv);
-    timeDiv.appendChild(endDiv);
+    var $time = $(document.createElement('div'))
+        .addClass('col-4 pr-0 table-time')
+        .append($start)
+        .append($end);
 
-    const summDiv = document.createElement('div');
-    summDiv.classList.add('col', 'text-turncate', 'table-summary');
-    summDiv.appendChild(document.createTextNode(e.summary));
+    var $summary = $(document.createElement('div'))
+        .addClass('col text-turncate table-summary')
+        .text(e.summary);
 
-    const eventDiv = document.createElement('div');
-    eventDiv.classList.add('row', 'align-items-center', 'mb-3', 'table-entry');
-    eventDiv.appendChild(timeDiv);
-    eventDiv.appendChild(summDiv);
+    var $event = $(document.createElement('a'))
+        .attr("role", "button")
+        .attr("tabindex", "0")  //tabindex==0 so that this DOM will be focusable but not change the tab order
+        .addClass('row align-items-center p-1 m-1 mb-2 table-entry')
+        .append($time)
+        .append($summary)
+        .data(e);
 
-    return eventDiv;
+    //Also useful in phon/email link
+    var description = "";
+    if (e.description != undefined) description = Autolinker.link(e.description.replace('#*', ''));
+
+    var content = ['<div class="row">',
+        '<div class="col">',
+        startTime.toLocaleTimeString("default"),
+        '</div><span>~</span><div class="col">',
+        endTime.toLocaleTimeString("default"),
+        '</div></div><div class="row"><div class="col">',
+        description,
+        '</div></div>'].join('');
+
+    $event.popover({
+        html: true,
+        title: e.summary,
+        content: content,
+        placement: 'auto',
+        trigger: 'focus'
+    });
+
+    return $event;
+}
+
+function buildTableSampleTemplate() {
+    return ['<div class="container popover" role="tooltip">',
+        '<div class="arrow"></div>',
+        '<form id="table-form">',
+        '<div class="row"><div class="popover-header col"></div></div>',
+        '<div class="row"><div class="popover-body col"></div></div>',
+        '</form>',
+        '</div>'].join('');
+}
+
+function buildTableSampleContent() {
+    var now = new Date();
+    return ['<div class="row" id="startDateTime">',
+        '<input class="form-control year col" type="text" value="', now.getFullYear(), '" required />',
+        '<span>/</span>',
+        '<input class="form-control month col" type="text" value="', now.getMonth(), '" required />',
+        '<span>/</span>',
+        '<input class="form-control date col" type="text" value="', now.getDate(), '" required />',
+        '<input class="form-control hours col" type="text" value="', now.getHours(), '" required />',
+        '<input class="form-control minutes col" type="text" value="', now.getMinutes(), '" required />',
+        '<input type="hidden" name="startDateTime" value="', now.toISOString(), '">',
+        '</div><div class="row" id="endDateTime">',
+        '<input class="form-control year col" type="text" value="', now.getFullYear(), '" required />',
+        '<span>/</span>',
+        '<input class="form-control month col" type="text" value="', now.getMonth(), '" required />',
+        '<span>/</span>',
+        '<input class="form-control date col" type="text" value="', now.getDate(), '" required />',
+        '<input class="form-control hours col" type="text" value="', now.getHours(), '" required />',
+        '<input class="form-control minutes col" type="text" value="', now.getMinutes(), '" required />',
+        '<input type="hidden" name="endDateTime" value="', now.toISOString(), '">',
+        '</div>',
+        '<div class="row">',
+        '<div class="form-group col">',
+        '<label for="table-form-desc">Description</label>',
+        '<textarea class="form-control" name="description" id="table-form-desc" placeholder="description"></textarea>',
+        '</div>',
+        '</div>',
+        '<div class="row">',
+        '<div class="form-group col">',
+        '<label for="table-form-tags">Tags</label>',
+        '<input class="form-control" type="text" name="tags" id="table-form-tags" placeholder="tags">',
+        '</div>',
+        '</div>',
+        '<div class="row">',
+        '<div class="col">',
+        '<input type="submit" class="btn btn-primary" id="table-submit" tabindex="0">Store</button>',
+        '</div>',
+        '</div>'].join('');
+}
+
+function initSamplePopover() {
+    var now = new Date();
+    const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
+    $('#table-sample-start').text(now.toLocaleTimeString("default", options));
+    $('#table-sample-end').text(now.toLocaleTimeString("default", options));
+    $('#table-sample-summary').text('...');
+
+    $('#table-form').focusout(function () {
+        setTimeout(function () {
+            if ($('#table-form input:focus, #table-form textarea:focus').length != 0) return;
+            $('#table-sample').popover('hide');
+            setTimeout(function () {
+                $("#table-sample").toggleClass('d-none');
+            }, 50);
+        }, 0);
+    });
+    $('#table-form [name="summary"]').change(function () {
+        $('#table-sample-summary').text($(this).val());
+    });
+    $('#startDateTime input, #endDateTime input').change(function () {
+        const $dateTime = $(this).parent();
+        var date = new Date(parseInt($dateTime.find('input.year').val()),
+            parseInt($dateTime.find('input.month').val()),
+            parseInt($dateTime.find('input.date').val()),
+            parseInt($dateTime.find('input.hours').val()),
+            parseInt($dateTime.find('input.minutes').val()),
+        );
+        if (isNaN(date)) {
+            if ($dateTime.attr('id')[0] == 's') {
+                $('#table-sample-start').text("");
+            }
+            else {
+                $('#table-sample-start').text("");
+            }
+            return;
+        }
+        $dateTime.find('input[type="hidden"]').attr('value', date.toISOString());
+        const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
+        if ($dateTime.attr('id')[0] == 's') {
+            $('#table-sample-start').text(date.toLocaleTimeString("default", options));
+        }
+        else {
+            $('#table-sample-end').text(date.toLocaleTimeString("default", options));
+        }
+    });
 }
