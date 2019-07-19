@@ -3,6 +3,7 @@ package com.google.codeu.data;
 import java.util.UUID;
 
 public class Tag {
+  private UUID id;
   private String userId;
   private String tag;
   private long eventDateTime;
@@ -17,9 +18,10 @@ public class Tag {
     this.tag = tag;
     this.eventDateTime = eventDateTime;
     this.timestamp = timestamp;
+    this.id = UUID.nameUUIDFromBytes( (userId+tag).getBytes() );
   }
   public UUID getId() {
-    return UUID.nameUUIDFromBytes( (userId+tag).getBytes() );
+    return id; 
   }
   public String getUserId() {
     return userId;

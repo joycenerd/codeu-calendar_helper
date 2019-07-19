@@ -79,7 +79,7 @@ public class CredentialServlet extends HttpServlet {
      To initialize flow, GoogleAuthorizationCodeFlow.
   */
   @Override
-  public void init() {
+  public void init(){
     List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
 
     // Load client secrets.
@@ -87,6 +87,7 @@ public class CredentialServlet extends HttpServlet {
     if (in == null) {
       //throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
       System.err.println("Resource not found: " + CREDENTIALS_FILE_PATH);
+      return;
     }
     try{
       //GoogleCredential credential = GoogleCredential.fromStream(in).createScoped(SCOPES); //for service account with service account keys

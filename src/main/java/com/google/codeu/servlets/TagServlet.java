@@ -26,6 +26,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.Date;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +63,14 @@ public class TagServlet extends HttpServlet {
       return;
     }
 
+    Date currDate = new Date();
     List<Tag> tags = datastore.getTags(userId);
+    for(Tag tag: tags){
+      if(tag.getEventDateTime() <= currDate.getTime() ){
+        datastore.deleteTag(tag);
+      }
+    }
+    tags = datastore.getTags(userId);
     Gson gson = new Gson();
     String json = gson.toJson(tags);
 

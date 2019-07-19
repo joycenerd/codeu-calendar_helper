@@ -388,3 +388,16 @@ span[style]{
   height: 36px;
   line-height:18px;
 }
+
+/*timeTable*/
+.table-entry{
+  text-decoration: none;
+  color: slategray;
+}
+.table-entry:hover{
+  background-color: skyblue;
+  color: snow;
+}
+.table-time{
+  white-space: nowrap;
+}
