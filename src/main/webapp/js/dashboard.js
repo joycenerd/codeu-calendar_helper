@@ -213,8 +213,13 @@ function loadTimetable(){
 
 function buildTimetableEntry( e ) {
   const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
-  const startTime = new Date(e.start.dateTime);
-  const endTime = new Date(e.end.dateTime);
+  if( e.start.dateTime.value == undefined ){
+    var startTime = new Date(e.start.dateTime);
+    var endTime = new Date(e.end.dateTime);
+  }else{
+    var startTime = new Date(e.start.dateTime.value);
+    var endTime = new Date(e.end.dateTime.value);
+  }
   var $start = $(document.createElement('div'))
                 .addClass('row')
                 .append( $(document.createElement('div'))
@@ -282,10 +287,6 @@ function buildTableSampleTemplate(){
 
 function buildTableSampleContent(){
   var now = new Date();
-  const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
-  $('#table-sample-start').text( now.toLocaleTimeString( "default", options ));
-  $('#table-sample-end').text(now.toLocaleTimeString( "default", options ));
-  $('#table-sample-summary').text('...');
   return ['<div class="row" id="startDateTime">',
               '<input class="form-control year col" type="text" value="',now.getFullYear(),'" required />',
               '<span>/</span>',
@@ -325,6 +326,12 @@ function buildTableSampleContent(){
 }
 
 function initSamplePopover(){
+  var now = new Date();
+  const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
+  $('#table-sample-start').text( now.toLocaleTimeString( "default", options ));
+  $('#table-sample-end').text(now.toLocaleTimeString( "default", options ));
+  $('#table-sample-summary').text('...');
+
   $('#table-form').focusout(function(){
       setTimeout( function(){
           if( $('#table-form input:focus, #table-form textarea:focus').length != 0 ) return;
@@ -375,8 +382,7 @@ function initSamplePopover(){
           console.log(data);
           if(data.error != null) window.location.replace(data.to);
           $('#table-form').focusout();
-          const eventDiv = buildTimetableEntry( data );
-          $timeTableContext.append(eventDiv);
+          loadTimetable();    //Here should be modified to adding animatedly
           }, "json")
       .fail(function(err){
           console.log(err);
