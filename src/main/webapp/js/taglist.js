@@ -52,7 +52,7 @@ function makeList(message) {
         const listItem = document.createElement("li");
         const a = document.createElement("a");
         a.textContent = listData[i];
-        a.setAttribute("href", "https://www.theverge.com/2019/6/6/18655027/google-sos-alerts-maps-floods-earthquakes-hurricanes-ios-android");
+        a.setAttribute("href", "#");
         listItem.appendChild(a);
         // Add listItem to the listElement
         listContainer.appendChild(listItem);
