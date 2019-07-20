@@ -1,0 +1,13 @@
+body{
+    background-image: url("https://images.unsplash.com/photo-1493723843671-1d655e66ac1c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+h1{
+    font-family: fantasy;
+    color: #4a47d5 ;
+}
+p #con{
+    font-family: "Source Sans Pro", "Arial", sans-serif;
+    color: black;
+}

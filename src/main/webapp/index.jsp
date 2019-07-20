@@ -9,6 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Image Upload Analysis</title>
+    <link rel="stylesheet" href="/css/unguided-projects.css">
 </head>
 
 <body>
