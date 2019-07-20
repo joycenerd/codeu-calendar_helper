@@ -12,6 +12,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Blobstore JSP Example</title>
+    <link rel="stylesheet" href="/css/main.css">
+	<link rel="stylesheet" href="/css/unguided-projects.css">
 </head>
 
 <body>
