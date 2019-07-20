@@ -117,7 +117,7 @@ limitations under the License.
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-calendar</artifactId>
-      <version>v3-rev305-1.23.0</version>
+      <version>v3-rev379-1.25.0</version>
     </dependency>
 
     <dependency>
