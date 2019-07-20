@@ -290,7 +290,7 @@ function buildTableSampleContent(){
   return ['<div class="row" id="startDateTime">',
               '<input class="form-control year col" type="text" value="',now.getFullYear(),'" required />',
               '<span>/</span>',
-              '<input class="form-control month col" type="text" value="',now.getMonth(),'" required />',
+              '<input class="form-control month col" type="text" value="',now.getMonth()+1,'" required />',
               '<span>/</span>',
               '<input class="form-control date col" type="text" value="',now.getDate(),'" required />',
               '<input class="form-control hours col" type="text" value="',now.getHours(),'" required />',
@@ -299,7 +299,7 @@ function buildTableSampleContent(){
             '</div><div class="row" id="endDateTime">',
               '<input class="form-control year col" type="text" value="',now.getFullYear(),'" required />',
               '<span>/</span>',
-              '<input class="form-control month col" type="text" value="',now.getMonth(),'" required />',
+              '<input class="form-control month col" type="text" value="',now.getMonth()+1,'" required />',
               '<span>/</span>',
               '<input class="form-control date col" type="text" value="',now.getDate(),'" required />',
               '<input class="form-control hours col" type="text" value="',now.getHours(),'" required />',
@@ -347,7 +347,7 @@ function initSamplePopover(){
   $('#startDateTime input, #endDateTime input').change(function(){
       const $dateTime = $(this).parent();
       var date = new Date(  parseInt($dateTime.find('input.year').val() ),
-          parseInt($dateTime.find('input.month').val() ),
+          parseInt($dateTime.find('input.month').val() ) - 1, //For date.getMonth() is 0-based
           parseInt($dateTime.find('input.date').val() ),
           parseInt($dateTime.find('input.hours').val() ),
           parseInt($dateTime.find('input.minutes').val() ),
