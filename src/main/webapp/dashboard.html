@@ -36,9 +36,9 @@
         $(document).ready(function () {
             $('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY' }, "startDateTime");
             $('#picker').dateTimePicker(null, "endDateTime");
-            $("#table-submit").click(function (event) {
+            $("#search-submit").click(function (event) {
                 event.preventDefault();
-                var eventData = $('#table-form').serializeArray();
+                var eventData = $('#search-form').serializeArray();
                 var startDateTime = new Date(eventData.find(o => o.name === 'startDateTime').value);
                 var endDateTime = new Date(eventData.find(o => o.name === 'endDateTime').value);
                 if (startDateTime >= endDateTime) {
@@ -60,7 +60,7 @@
                             if (response.error != null) window.location.replace(data.to);
                         });
                     };
-                    $('#table-form').focusout();
+                    $('#search-form').focusout();
                     loadTimetable();    //Here should be modified to adding animatedly
                 }, "json")
                     .fail(function (err) {
