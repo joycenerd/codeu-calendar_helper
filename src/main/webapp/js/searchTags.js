@@ -1,24 +1,24 @@
-// Fetch messages and add them to the page.
-function fetchMessages() {
-    const url = '/taglist';
+function getTags() {
+    const url = '/dashboard/tags';
     fetch(url)
         .then((response) => {
             return response.json();
         })
-        .then((messages) => {
+        .then((tagData) => {
             const tagContainer = document.getElementById('myUL');
-            if (messages.length == 0) {
-                tagContainer.innerHTML = '<p>There are no tag yet.</p>';
+            console.log(tagData.length);
+            if (tagData.length == 0) {
+                tagContainer.innerHTML = '<p>There are no tags yet.</p>';
             } else {
                 tagContainer.innerHTML = '';
             }
-            messages.forEach((message) => {
-                const tagDiv = makeList(message);
-                console.log(tagDiv);
+            tagData.forEach((tag) => {
+                const tagDiv = makeList(tag);
                 tagContainer.appendChild(tagDiv);
             });
         });
 }
+
 function myFunction() {
     var input, filter, ul, li, a, i, txtValue;
     input = document.getElementById("myInput");
@@ -36,31 +36,20 @@ function myFunction() {
     }
 }
 
-function makeList(message) {
-    // Establish the array which acts as a data source for the list
+function makeList(tag) {
 
-    const listData = message.text.match(/#\w+/g);
+    const listData = tag.tag;
     // Make a container element for the list
     const listContainer = document.createElement("div");
     if (listData == null) return listContainer; //!!!!!!!!!!!!!!!!!!!!!!! important
+    const listItem = document.createElement("li");
+    const a = document.createElement("a");
+    a.textContent = listData;
+    a.setAttribute("href", "https://calendar.google.com/calendar/");
+    listItem.appendChild(a);
+    // Add listItem to the listElement
+    listContainer.appendChild(listItem);
 
-    // Set up a loop that goes through the items in listItems one at a time
-    const numberOfListItems = listData.length;
-
-    for (var i = 0; i < numberOfListItems; ++i) {
-        // create an item for each one
-        const listItem = document.createElement("li");
-        const a = document.createElement("a");
-        a.textContent = listData[i];
-        a.setAttribute("href", "#");
-        listItem.appendChild(a);
-        // Add listItem to the listElement
-        listContainer.appendChild(listItem);
-
-    }
     return listContainer;
 }
 
-function buildUI() {
-    fetchMessages();
-}

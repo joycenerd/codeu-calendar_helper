@@ -388,6 +388,52 @@ span[style]{
   height: 36px;
   line-height:18px;
 }
+.mystyle {
+  background-color:rgb(66, 245, 185);
+  color: white;
+  font-size: 25px;
+  font-family: "italic";
+  text-align: center;
+}
+.card-body-tag{
+  background-image: url("https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80");
+  float: right;
+}
+.butn {
+  background: #3498db;
+  background-image: -webkit-linear-gradient(top, #3498db, #2b34b8);
+  background-image: -moz-linear-gradient(top, #3498db, #2b34b8);
+  background-image: -ms-linear-gradient(top, #3498db, #2b34b8);
+  background-image: -o-linear-gradient(top, #3498db, #2b34b8);
+  background-image: linear-gradient(to bottom, #3498db, #2b34b8);
+  -webkit-border-radius: 16;
+  -moz-border-radius: 16;
+  border-radius: 5px;
+  text-shadow: 3px 1px 3px #666666;
+  font-family: Georgia;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 5px 5px 5px 5px;
+  text-decoration: none;
+  float: right;
+}
+
+.butn:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #3734d9);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #3734d9);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #3734d9);
+  background-image: -o-linear-gradient(top, #3cb0fd, #3734d9);
+  background-image: linear-gradient(to bottom, #3cb0fd, #3734d9);
+  text-decoration: none;
+}
+.card-body-search,#tag-container,#search{
+  background-image: url("https://secure.insightexpressai.com/adServer/adServerESI.aspx?script=false&bannerID=5120720&rnd=unsplash&redir=https://secure.insightexpressai.com/adserver/1pixel.gif");
+}
+
+.change:hover { 
+  background-color: rgb(3, 252, 148);
+}
 
 /*timeTable*/
 .table-entry{
