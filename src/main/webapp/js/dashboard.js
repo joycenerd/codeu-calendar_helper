@@ -133,7 +133,7 @@ $(function () {
 
 
 //JQuery
-$(document).ready(function() { 
+$(function() {  //$(document).ready is removed in 3.0
 
   //timeTable
   loadTimetable();
@@ -208,6 +208,18 @@ function loadTimetable(){
             $timeTableContext.append(eventDiv);
           }
           });
+
+      $('.table-entry')
+        .not('#table-sample')
+        .on('show.bs.popover', function(){
+          setTimeout(function(){
+              $('.popover').mousedown(function(event){
+                  if( $('.popover').has(event.target).length == 0 ) return;
+                  event.preventDefault();
+                  });
+              }, 0);
+      });
+
       });
 }
 
@@ -276,7 +288,7 @@ function buildTimetableEntry( e ) {
 }
 
 function buildTableSampleTemplate(){
-  return ['<div class="container popover" role="tooltip">',
+  return ['<div class="container popover table-form-popover" role="tooltip">',
             '<div class="arrow"></div>',
             '<form id="table-form">',
             '<div class="row"><div class="popover-header col"></div></div>',
@@ -344,6 +356,12 @@ function initSamplePopover(){
   $('#table-form [name="summary"]').change(function(){
       $('#table-sample-summary').text( $(this).val() );
       });
+  //popover doesn't allow customized id, click is left mouse click and leave
+  $('.table-form-popover').mousedown(function(event){
+        if( $('.table-form-popover').has(event.target).length == 0 ) return;
+        if( event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+        event.preventDefault();
+      });
   $('#startDateTime input, #endDateTime input').change(function(){
       const $dateTime = $(this).parent();
       var date = new Date(  parseInt($dateTime.find('input.year').val() ),
@@ -380,20 +398,20 @@ function initSamplePopover(){
         return;
       }
       $.post("/dashboard/calendar", eventData, function(data){
-          console.log(data);
           if(data.error != null) window.location.replace(data.to);
           var tagData = {
             method: 'update',
             eventDateTime: eventData.find(o => o.name === 'startDateTime').value
           };
-          for( const tag of eventData.find(o => o.name === 'tags').value.split(/[\s,]+/) ){
-            tagData.tag = tag;
-            console.log(tagData);
-            $.post("/dashboard/tagManage", tagData, function(response){
-                console.log(response);
-                if(response.error != null) window.location.replace(data.to);
-                });
-          };
+          const tags = eventData.find(o => o.name === 'tags').value;
+          if(tags.length > 0){
+            for( const tag of tags.split(/[\s,]+/) ){
+              tagData.tag = tag;
+              $.post("/dashboard/tagManage", tagData, function(response){
+                  if(response.error != null) window.location.replace(data.to);
+                  });
+            };
+          }
           $('#table-form').focusout();
           loadTimetable();    //Here should be modified to adding animatedly
           }, "json")
