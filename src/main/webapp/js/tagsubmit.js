@@ -10,8 +10,35 @@ $(document).ready(function () {
             alert("Invalid date time.");
             return;
         }
+
         $.post("/dashboard/calendar", eventData, function (data) {
             console.log(data);
+            var text = $("<p>You have just posted tag on your calendar,you can check it by opening your calendar or just close this window.</p>");
+            var block = $('<div id="dialog" title="Successfully adding tag!" ><div>');
+            var r = $('<input type="button" value="confirm?" id="opener" class="button" />');
+            $(".card-body-tag").append(r);
+            $(".card-body-tag").append(block);
+            $("#dialog").dialog({
+                autoOpen: false,
+                show: {
+                    effect: "blind",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "explode",
+                    duration: 1000
+                }
+            });
+            $("#opener").on("click", function () {
+                $("#dialog").dialog("open");
+                $("#dialog").append(text);
+                setTimeout(function () { // prevent creating too many buttons
+                    $("#opener").remove();
+                }, 5000);
+                setTimeout(function () {
+                    $("#dialog").remove();
+                }, 20000);
+            });
             if (data.error != null) window.location.replace(data.to);
             var tagData = {
                 method: 'update',
@@ -26,10 +53,10 @@ $(document).ready(function () {
                 });
             };
             $('#search-form').focusout();
-            loadTimetable();    //Here should be modified to adding animatedly
         }, "json")
             .fail(function (err) {
                 console.log(err);
             });
     });
+
 })
