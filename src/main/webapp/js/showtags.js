@@ -35,7 +35,6 @@ function buildtagDiv(tag) {
 
     const bodyDiv = document.createElement('div');
     bodyDiv.classList.add('row', 'change');
-    bodyDiv.setAttribute('id', "hover");
     bodyDiv.appendChild(textDiv);
 
     const tagInnerDiv = document.createElement('div');
