@@ -464,3 +464,17 @@ span[style]{
 .button:hover {
   background: #3cb0fd;
 }
+.ui-dialog-titlebar-close {
+    padding:0 !important;
+}
+
+.ui-dialog-titlebar-close:after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    /* Change path to image*/
+    background-image: url(themes/base/images/ui-icons_777777_256x240.png);
+    background-position: -96px -128px;
+    background-repeat: no-repeat;
+}
