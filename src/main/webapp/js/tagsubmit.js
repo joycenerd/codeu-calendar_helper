@@ -13,6 +13,8 @@ $(document).ready(function () {
 
         $.post("/dashboard/calendar", eventData, function (data) {
             console.log(data);
+            var bootstrapButton = $.fn.button.noConflict();
+            $.fn.bootstrapBtn = bootstrapButton;
             var text = $("<p>You have just posted tag on your calendar,you can check it by opening your calendar or just close this window.</p>");
             var block = $('<div id="dialog" title="Successfully adding tag!" ><div>');
             var r = $('<input type="button" value="confirm?" id="opener" class="button" />');
