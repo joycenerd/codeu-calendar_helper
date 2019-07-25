@@ -447,3 +447,6 @@ span[style]{
 .table-time{
   white-space: nowrap;
 }
+.table-form-popover{
+  max-width: 300px;
+}
