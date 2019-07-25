@@ -13,8 +13,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.2/css/mdb.min.css" rel="stylesheet">
     <!-- New font family-->
     <link href="https://fonts.googleapis.com/css?family=Istok+Web|Muli:700&display=swap" rel="stylesheet">
+    <!--JQuery css-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <!-- JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <!-- Bootstrap js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
@@ -39,20 +42,22 @@
     <title>dashboard</title>
 </head>
 
-<body onload="fetchTags(); getTags();">
+<body>
     <div id='cssmenu'>
         <ul>
             <li class='active'><a href='https://su19-codeu-49-8204.appspot.com/'><span><i class="fas fa-home"></i>&nbsp;
                         Home</span></a></li>
+            <li><a href='/dashboard.html'><span><i class="fas fa-chalkboard"></i>&nbsp;
+                        Dashboard</span></a></li>
             <li><a href='https://calendar.google.com/calendar/'><span><i class="fa fa-book fa-fw"
                             aria-hidden="true"></i>&nbsp; Calendar</span></a></li>
             <li><a href='#'><span><i class="fas fa-tasks"></i>&nbsp; Time Table</span></a></li>
             <li><a href='#'><span><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>&nbsp; Today Tasks</span></a>
             </li>
-            <li class='last'><a href='#'><span><i class="fas fa-tag"></i>&nbsp; Tag List</span></a></li>
+            <li class='last'><a href='/tagshow.html'><span><i class="fas fa-tag"></i>&nbsp; Tag List</span></a></li>
         </ul>
     </div>
-    <div class=" container">
+    <div class=" container" id="container">
         <div class="row">
             <div class="col-md-3">
                 <div id="draggable-handle" class="card">
@@ -100,84 +105,61 @@
                     </div>
                 </div>
             </div>
-            <div id="draggable-1" class="card" style="width: 460px;">
-                <h5 class="card-header primary-color white-text">#Tag</h5>
-                <div class="card-body-tag">
-                    <form id="search-form" action="/dashboard/calendar" method="POST" class="hidden" name="Form1">
-                        <table rules="all" style="background:#fff;">
-                            <tr>
-                                <td
-                                    style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;">
-                                    Tags:</td>
-                                <td
-                                    style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;">
-                                    Event summary:</td>
-                                <td>
-                                    <i class="fas fa-plus"></i><span
-                                        style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;"
-                                        onclick="addMoreRows(this.form);">
-                                        Add More
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr id="rowId">
+            <div class="col-md-4">
+                <div id="draggable-1" class="card" style="width: 460px;">
+                    <h5 class="card-header primary-color white-text">#Tag</h5>
+                    <div class="card-body-tag">
+                        <form id="search-form" action="/dashboard/calendar" method="POST" class="hidden" name="Form1">
+                            <table rules="all" style="background:#fff;">
+                                <tr>
+                                    <td
+                                        style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;">
+                                        Tags:</td>
+                                    <td
+                                        style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;">
+                                        Event summary:</td>
+                                    <td>
+                                        <i class="fas fa-plus"></i><span
+                                            style="color:rgb(255, 0, 191); cursor:pointer; font-style: italic; font-weight: bold;"
+                                            onclick="addMoreRows(this.form);">
+                                            Add More
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr id="rowId">
 
-                                <td><input id="tagbox1" name="tags" type="text" size="17%" /></td>
-                                <td><input id="textbox1" name="summary" type="text" /></td>
+                                    <td><input id="tagbox1" name="tags" type="text" size="17%" /></td>
+                                    <td><input id="textbox1" name="summary" type="text" /></td>
 
-                                <div style="width: 200px; margin: 50px auto;">
-                                    <div style="width: 250px; margin: 20px auto;">
-                                        Start:<div id="picker-no-time"></div>
-                                        <input type="hidden" id="result" />
+                                    <div style="width: 200px; margin: 50px auto;">
+                                        <div style="width: 250px; margin: 20px auto;">
+                                            Start:<div id="picker-no-time"></div>
+                                            <input type="hidden" id="result" />
+                                        </div>
+                                        <div style="width: 250px; margin: 50px auto;">
+                                            End:<div id="picker"> </div>
+                                            <input type="hidden" id="result2" />
+                                        </div>
                                     </div>
-                                    <div style="width: 250px; margin: 50px auto;">
-                                        End:<div id="picker"> </div>
-                                        <input type="hidden" id="result2" />
-                                    </div>
-                                </div>
-                            </tr>
-                        </table>
-                        <div id="addedRows"></div>
-                        <a class="btn btn-default btn-sm" id='getButtonValue'>
-                            <i class="fas fa-user-tag"></i> Get tag Value</a><br>
-                        Enter description with tags:
-                        <br />
-                        <input type="text" name="description">
-                        <input type="hidden" name="from" value="dashboard.html">
-                        <input id="search-submit" type="submit" class="btn btn-primary" value="Submit">
-                    </form>
-                </div>
-            </div>
-
-            <div id="draggable-2" class="card">
-                <h5 class="card-header purple white-text">#Tag search</h5>
-                <div class="card-body-search" id="search">
-                    <div id="tag-container" class="container align-middle text-monospace">
-                        <div id="searchbar">
-                            <input type="text" id="myInput" class="form-control" onkeyup="myFunction()"
-                                placeholder="Search for...">
-                            <a href="https://calendar.google.com/calendar/" class="btn btn-secondary"><i
-                                    class="fas fa-search"></i>Search</a>
-                        </div>
-                        <ul id="myUL"></ul>
+                                </tr>
+                            </table>
+                            <div id="addedRows"></div>
+                            <a class="btn btn-default btn-sm" id='getButtonValue'>
+                                <i class="fas fa-user-tag"></i> Get tag Value</a><br>
+                            Enter description with tags:
+                            <br />
+                            <input type="text" name="description">
+                            <input type="hidden" name="from" value="dashboard.html">
+                            <input id="search-submit" type="submit" class="btn btn-primary" value="Submit"
+                                style="display:inline-block;">
+                        </form>
                     </div>
                 </div>
             </div>
 
-
-            <div id="draggable-3" class="card">
-                <h5 class="card-header success-color white-text">#Tag View</h5>
-                <div class="card-body" id="card-body-withtags">
-                </div>
-                <div class="result"></div>
-            </div>
-
-
         </div>
     </div>
     <script src="/js/dashboard.js"></script>
-    <script src="/js/showtags.js"></script>
-    <script src="/js/searchTags.js"></script>
 </body>
 
 </html>

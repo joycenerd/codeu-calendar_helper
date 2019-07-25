@@ -52,7 +52,7 @@ function makeList(message) {
         const listItem = document.createElement("li");
         const a = document.createElement("a");
         a.textContent = listData[i];
-        a.setAttribute("href", "#");
+        a.setAttribute("href", "https://su19-codeu-49-8204.appspot.com/feed.html");
         listItem.appendChild(a);
         // Add listItem to the listElement
         listContainer.appendChild(listItem);
