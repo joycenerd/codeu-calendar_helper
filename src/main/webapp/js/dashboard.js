@@ -133,12 +133,13 @@ $(function () {
 
 
 //JQuery
-$(document).ready(function() { 
+$(function() {  //$(document).ready is removed in 3.0
 
   //timeTable
   loadTimetable();
 
   $("#table-sample").popover({
+        container: 'body',
         template: buildTableSampleTemplate(),
         html: true,
         title: '<input class="form-control form-control-lg" type="text" name="summary" placeholder="New Event" required />',
@@ -208,6 +209,18 @@ function loadTimetable(){
             $timeTableContext.append(eventDiv);
           }
           });
+
+      $('.table-entry')
+        .not('#table-sample')
+        .on('show.bs.popover', function(){
+          setTimeout(function(){
+              $('.popover').mousedown(function(event){
+                  if( $('.popover').has(event.target).length == 0 ) return;
+                  event.preventDefault();
+                  });
+              }, 0);
+      });
+
       });
 }
 
@@ -276,7 +289,7 @@ function buildTimetableEntry( e ) {
 }
 
 function buildTableSampleTemplate(){
-  return ['<div class="container popover" role="tooltip">',
+  return ['<div class="container popover table-form-popover" role="tooltip">',
             '<div class="arrow"></div>',
             '<form id="table-form">',
             '<div class="row"><div class="popover-header col"></div></div>',
@@ -287,24 +300,39 @@ function buildTableSampleTemplate(){
 
 function buildTableSampleContent(){
   var now = new Date();
-  return ['<div class="row" id="startDateTime">',
-              '<input class="form-control year col" type="text" value="',now.getFullYear(),'" required />',
-              '<span>/</span>',
-              '<input class="form-control month col" type="text" value="',now.getMonth(),'" required />',
-              '<span>/</span>',
-              '<input class="form-control date col" type="text" value="',now.getDate(),'" required />',
-              '<input class="form-control hours col" type="text" value="',now.getHours(),'" required />',
-              '<input class="form-control minutes col" type="text" value="',now.getMinutes(),'" required />',
+  var roundedMinutes = Math.ceil(now.getMinutes() / 5) * 5;
+  now.setMinutes( roundedMinutes );
+  var oneHourLater = new Date( now.getTime() );
+  oneHourLater.setHours( now.getHours() + 1 );
+  var oneDayLater = new Date( now.getTime() );
+  oneDayLater.setDate( now.getDate() + 1 );
+  return ['<label for="startDateTime">Start time:</label>',
+          '<div class="row mb-1" id="startDateTime">',
+              '<div class="col-7">',
+                '<input type="number" class="year" min="',now.getFullYear(),'" max="',oneDayLater.getFullYear(),'" value="',now.getFullYear(),'" required>', ' . ',
+                '<input type="number" class="month" min="',now.getMonth()+1,'" max="',oneDayLater.getMonth()+1,'" value="',now.getMonth()+1,'" required>', ' . ',
+                '<input type="number" class="date" min="',now.getDate(),'" max="',oneDayLater.getDate(),'" value="',now.getDate(),'" step="1" required>',
+              '</div>',
+              '<div class="col">',
+                '<input class="hours" type="number" min="0" max="23" value="',now.getHours(),'" step="1" required>',
+                ' : ',
+                '<input class="minutes" type="number" min="0" max="59" value="',now.getMinutes(),'" step="5" required>',
               '<input type="hidden" name="startDateTime" value="',now.toISOString(),'">',
-            '</div><div class="row" id="endDateTime">',
-              '<input class="form-control year col" type="text" value="',now.getFullYear(),'" required />',
-              '<span>/</span>',
-              '<input class="form-control month col" type="text" value="',now.getMonth(),'" required />',
-              '<span>/</span>',
-              '<input class="form-control date col" type="text" value="',now.getDate(),'" required />',
-              '<input class="form-control hours col" type="text" value="',now.getHours(),'" required />',
-              '<input class="form-control minutes col" type="text" value="',now.getMinutes(),'" required />',
-              '<input type="hidden" name="endDateTime" value="',now.toISOString(),'">',
+              '</div>',
+          '</div>',
+          '<label for="endDateTime">End time:</label>',
+          '<div class="row mb-1" id="endDateTime">',
+              '<div class="col-7">',
+                '<input type="number" class="year" min="',now.getFullYear(),'" max="',oneDayLater.getFullYear(),'" value="',now.getFullYear(),'" required>', ' . ',
+                '<input type="number" class="month" min="',now.getMonth()+1,'" max="',oneDayLater.getMonth()+1,'" value="',now.getMonth()+1,'" required>', ' . ',
+                '<input type="number" class="date" min="',now.getDate(),'" max="',oneDayLater.getDate(),'" value="',oneHourLater.getDate(),'" required />',
+              '</div>',
+              '<div class="col">',
+                '<input type="number" class="hours" min="0" max="23" value="',oneHourLater.getHours(),'" step="1" required>',
+                ' : ',
+                '<input type="number" class="minutes" min="0" max="59" value="',oneHourLater.getMinutes(),'" step="5" required>',
+              '<input type="hidden" name="endDateTime" value="',oneHourLater.toISOString(),'">',
+              '</div>',
             '</div>',
             '<div class="row">',
               '<div class="form-group col">',
@@ -320,16 +348,17 @@ function buildTableSampleContent(){
             '</div>',
             '<div class="row">',
               '<div class="col">',
-                '<input type="submit" class="btn btn-primary" id="table-submit" tabindex="0">Store</button>',
+                '<input type="submit" class="btn btn-primary" id="table-submit" value="Store" tabindex="0">',
               '</div>',
             '</div>'].join('');
 }
 
 function initSamplePopover(){
-  var now = new Date();
+  var start = new Date($('#table-form [name="startDateTime"]').val());
+  var end = new Date($('#table-form [name="endDateTime"]').val());
   const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
-  $('#table-sample-start').text( now.toLocaleTimeString( "default", options ));
-  $('#table-sample-end').text(now.toLocaleTimeString( "default", options ));
+  $('#table-sample-start').text( start.toLocaleTimeString( "default", options ));
+  $('#table-sample-end').text( end.toLocaleTimeString( "default", options ));
   $('#table-sample-summary').text('...');
 
   $('#table-form').focusout(function(){
@@ -342,12 +371,22 @@ function initSamplePopover(){
           }, 0);
       });
   $('#table-form [name="summary"]').change(function(){
-      $('#table-sample-summary').text( $(this).val() );
+      if($(this).val().length == 0){
+        $('#table-sample-summary').text( "..." );
+      }else{
+        $('#table-sample-summary').text( $(this).val() );
+      }
+      });
+  //popover doesn't allow customized id, click is left mouse click and leave
+  $('.table-form-popover').mousedown(function(event){
+        if( $('.table-form-popover').has(event.target).length == 0 ) return;
+        if( event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+        event.preventDefault();
       });
   $('#startDateTime input, #endDateTime input').change(function(){
-      const $dateTime = $(this).parent();
+      const $dateTime = $(this).parent().parent();
       var date = new Date(  parseInt($dateTime.find('input.year').val() ),
-          parseInt($dateTime.find('input.month').val() ),
+          parseInt($dateTime.find('input.month').val() ) - 1, //For date.getMonth() is 0-based
           parseInt($dateTime.find('input.date').val() ),
           parseInt($dateTime.find('input.hours').val() ),
           parseInt($dateTime.find('input.minutes').val() ),
@@ -380,20 +419,20 @@ function initSamplePopover(){
         return;
       }
       $.post("/dashboard/calendar", eventData, function(data){
-          console.log(data);
           if(data.error != null) window.location.replace(data.to);
           var tagData = {
             method: 'update',
             eventDateTime: eventData.find(o => o.name === 'startDateTime').value
           };
-          for( const tag of eventData.find(o => o.name === 'tags').value.split(/[\s,]+/) ){
-            tagData.tag = tag;
-            console.log(tagData);
-            $.post("/dashboard/tagManage", tagData, function(response){
-                console.log(response);
-                if(response.error != null) window.location.replace(data.to);
-                });
-          };
+          const tags = eventData.find(o => o.name === 'tags').value;
+          if(tags.length > 0){
+            for( const tag of tags.split(/[\s,]+/) ){
+              tagData.tag = tag;
+              $.post("/dashboard/tagManage", tagData, function(response){
+                  if(response.error != null) window.location.replace(data.to);
+                  });
+            };
+          }
           $('#table-form').focusout();
           loadTimetable();    //Here should be modified to adding animatedly
           }, "json")
