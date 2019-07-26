@@ -449,6 +449,7 @@ span[style]{
 }
 .table-form-popover{
   max-width: 300px;
+  font-size: small;
 }
 /* pop box*/
 .button {

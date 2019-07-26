@@ -433,7 +433,7 @@ function initSamplePopover(){
                   });
             };
           }
-          $('#table-form').focusout();
+          $(document.activeElement).focusout();
           loadTimetable();    //Here should be modified to adding animatedly
           }, "json")
       .fail(function(err){
