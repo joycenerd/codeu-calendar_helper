@@ -148,6 +148,8 @@ $(function() {  //$(document).ready is removed in 3.0
         trigger: 'manual'
       }).toggleClass('d-none');
 
+  bindingSamplePopover();
+
   $("#timeTable").dblclick(function(){
       $("#table-sample").toggleClass('d-none');
       $('#table-sample').popover('show');
@@ -164,18 +166,11 @@ $(function() {  //$(document).ready is removed in 3.0
       }, 0);
   });
   
-
-  //Timetable sumit
-  $("#submit").click(function( event ){
+  //Biding on all selected elements including those elements that haven't been created yet.
+  $( document ).on( "mousedown", ".popover:not(.table-form-popover)", function() {
+      if( $('.popover').has(event.target).length == 0 ) return;
       event.preventDefault();
-      $.post("/dashboard/calendar", $("#timeTableForm").serializeArray(), function(events){
-          if(events.error != null) window.location.replace(events.to);
-        }, "json")
-      .fail(function(err){
-          console.log(err);
-          });
       });
-
 });
 
 function loadTimetable(){
@@ -209,17 +204,6 @@ function loadTimetable(){
             $timeTableContext.append(eventDiv);
           }
           });
-
-      $('.table-entry')
-        .not('#table-sample')
-        .on('show.bs.popover', function(){
-          setTimeout(function(){
-              $('.popover').mousedown(function(event){
-                  if( $('.popover').has(event.target).length == 0 ) return;
-                  event.preventDefault();
-                  });
-              }, 0);
-      });
 
       });
 }
@@ -299,39 +283,32 @@ function buildTableSampleTemplate(){
 }
 
 function buildTableSampleContent(){
-  var now = new Date();
-  var roundedMinutes = Math.ceil(now.getMinutes() / 5) * 5;
-  now.setMinutes( roundedMinutes );
-  var oneHourLater = new Date( now.getTime() );
-  oneHourLater.setHours( now.getHours() + 1 );
-  var oneDayLater = new Date( now.getTime() );
-  oneDayLater.setDate( now.getDate() + 1 );
   return ['<label for="startDateTime">Start time:</label>',
           '<div class="row mb-1" id="startDateTime">',
               '<div class="col-7">',
-                '<input type="number" class="year" min="',now.getFullYear(),'" max="',oneDayLater.getFullYear(),'" value="',now.getFullYear(),'" required>', ' . ',
-                '<input type="number" class="month" min="',now.getMonth()+1,'" max="',oneDayLater.getMonth()+1,'" value="',now.getMonth()+1,'" required>', ' . ',
-                '<input type="number" class="date" min="',now.getDate(),'" max="',oneDayLater.getDate(),'" value="',now.getDate(),'" step="1" required>',
+                '<input type="number" class="year" required>', ' . ',
+                '<input type="number" class="month" required>', ' . ',
+                '<input type="number" class="date" step="1" required>',
               '</div>',
               '<div class="col">',
-                '<input class="hours" type="number" min="0" max="23" value="',now.getHours(),'" step="1" required>',
+                '<input class="hours" type="number" min="0" max="23" step="1" required>',
                 ' : ',
-                '<input class="minutes" type="number" min="0" max="59" value="',now.getMinutes(),'" step="5" required>',
-              '<input type="hidden" name="startDateTime" value="',now.toISOString(),'">',
+                '<input class="minutes" type="number" min="0" max="59" step="5" required>',
+              '<input type="hidden" name="startDateTime">',
               '</div>',
           '</div>',
           '<label for="endDateTime">End time:</label>',
           '<div class="row mb-1" id="endDateTime">',
               '<div class="col-7">',
-                '<input type="number" class="year" min="',now.getFullYear(),'" max="',oneDayLater.getFullYear(),'" value="',now.getFullYear(),'" required>', ' . ',
-                '<input type="number" class="month" min="',now.getMonth()+1,'" max="',oneDayLater.getMonth()+1,'" value="',now.getMonth()+1,'" required>', ' . ',
-                '<input type="number" class="date" min="',now.getDate(),'" max="',oneDayLater.getDate(),'" value="',oneHourLater.getDate(),'" required />',
+                '<input type="number" class="year" required>', ' . ',
+                '<input type="number" class="month" required>', ' . ',
+                '<input type="number" class="date" required />',
               '</div>',
               '<div class="col">',
-                '<input type="number" class="hours" min="0" max="23" value="',oneHourLater.getHours(),'" step="1" required>',
+                '<input type="number" class="hours" min="0" max="23" step="1" required>',
                 ' : ',
-                '<input type="number" class="minutes" min="0" max="59" value="',oneHourLater.getMinutes(),'" step="5" required>',
-              '<input type="hidden" name="endDateTime" value="',oneHourLater.toISOString(),'">',
+                '<input type="number" class="minutes" min="0" max="59" step="5" required>',
+              '<input type="hidden" name="endDateTime">',
               '</div>',
             '</div>',
             '<div class="row">',
@@ -354,14 +331,40 @@ function buildTableSampleContent(){
 }
 
 function initSamplePopover(){
-  var start = new Date($('#table-form [name="startDateTime"]').val());
-  var end = new Date($('#table-form [name="endDateTime"]').val());
+  var now = new Date();
+  var roundedMinutes = Math.ceil(now.getMinutes() / 5) * 5;
+  now.setMinutes( roundedMinutes );
+  var oneHourLater = new Date( now.getTime() );
+  oneHourLater.setHours( now.getHours() + 1 );
+  var oneDayLater = new Date( now.getTime() );
+  oneDayLater.setDate( now.getDate() + 1 );
+
   const options = { hour12: false, hour: "2-digit", minute: "2-digit" };
-  $('#table-sample-start').text( start.toLocaleTimeString( "default", options ));
-  $('#table-sample-end').text( end.toLocaleTimeString( "default", options ));
+  $('#table-sample-start').text( now.toLocaleTimeString( "default", options ));
+  $('#table-sample-end').text( oneHourLater.toLocaleTimeString( "default", options ));
   $('#table-sample-summary').text('...');
 
-  $('#table-form').focusout(function(){
+  function initDateTime( $DateTime, min, max, value ){
+    $DateTime.find( '.year' ).attr({'min': min.getFullYear(), 
+                                    'max': max.getFullYear(),
+                            }).val( value.getFullYear() );
+    $DateTime.find( '.month' ).attr({'min': min.getMonth()+1, 
+                                     'max': max.getMonth()+1,
+                              }).val( value.getMonth()+1 );
+    $DateTime.find( '.date' ).attr({'min': min.getDate(), 
+                                     'max': max.getDate(),
+                              }).val( value.getDate() );
+    $DateTime.find( '.hours' ).val( value.getHours() );
+    $DateTime.find( '.minutes' ).val( value.getMinutes() );
+    $DateTime.find( '[type="hidden"]' ).val( value.toISOString() );
+  
+  }
+  initDateTime( $( '#startDateTime' ) , now, oneDayLater, now );
+  initDateTime( $( '#endDateTime' )   , now, oneDayLater, oneHourLater );
+}
+
+function bindingSamplePopover(){
+  $( document ).on( 'focusout', '#table-form', function() {
       setTimeout( function(){
           if( $('#table-form input:focus, #table-form textarea:focus').length != 0 ) return;
           $('#table-sample').popover('hide');
@@ -370,7 +373,7 @@ function initSamplePopover(){
               }, 50);
           }, 0);
       });
-  $('#table-form [name="summary"]').change(function(){
+  $( document ).on( 'change', '#table-form [name="summary"]', function() {
       if($(this).val().length == 0){
         $('#table-sample-summary').text( "..." );
       }else{
@@ -378,12 +381,15 @@ function initSamplePopover(){
       }
       });
   //popover doesn't allow customized id, click is left mouse click and leave
-  $('.table-form-popover').mousedown(function(event){
+  $( document ).on( 'mousedown', '.table-form-popover', function() {
         if( $('.table-form-popover').has(event.target).length == 0 ) return;
-        if( event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+        if( event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA'){
+          event.stopPropagation();
+          return;
+        };
         event.preventDefault();
       });
-  $('#startDateTime input, #endDateTime input').change(function(){
+  $( document ).on( 'change', '#startDateTime input, #endDateTime input', function() {
       const $dateTime = $(this).parent().parent();
       var date = new Date(  parseInt($dateTime.find('input.year').val() ),
           parseInt($dateTime.find('input.month').val() ) - 1, //For date.getMonth() is 0-based
@@ -409,7 +415,7 @@ function initSamplePopover(){
         $('#table-sample-end').text( date.toLocaleTimeString("default", options) );
       }
   });
-  $("#table-submit").click(function( event ){
+  $( document ).on( 'click', '#table-submit', function() {
       event.preventDefault();
       var eventData = $('#table-form').serializeArray();
       var startDateTime = new Date( eventData.find(o => o.name === 'startDateTime').value );
