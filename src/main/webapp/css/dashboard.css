@@ -444,6 +444,21 @@ span[style]{
   background-color: skyblue;
   color: snow;
 }
+.next-day-block{
+  border-bottom: 1px solid darkblue;
+  display: inline-block;
+  width: 82%;
+  margin-left: 9%;
+}
+.night-night{
+  float: right;
+  color: darkblue;
+  background-color: white;
+  display: none;
+}
+.next-day-block:hover .night-night{
+  display: initial;
+}
 .table-time{
   white-space: nowrap;
 }
