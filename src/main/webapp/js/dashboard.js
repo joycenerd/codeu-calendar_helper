@@ -175,8 +175,8 @@ $(function() {  //$(document).ready is removed in 3.0
 
 function loadTimetable(){
   var start = new Date();
-  var end = new Date();
-  end.setHours(23,59,59,999);
+  var end = new Date(start);
+  end.setDate( end.getDate() + 1 );
   const url = "/dashboard/calendar?from=dashboard.html&timeMin="+start.toISOString()+
               "&timeMax="+end.toISOString()+
               "&timezone="+Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -198,10 +198,22 @@ function loadTimetable(){
       return new Date(a.start.dateTime) - new Date(b.start.dateTime)});
       var $timeTableContext = $("#timeTableContext")
                                 .html("");
+      var isAppendedNextDayBlock = false;
       events.forEach(( e ) => {
           if(e.start.dateTime != null){
-            const eventDiv = buildTimetableEntry( e );
-            $timeTableContext.append(eventDiv);
+            const $eventDiv = buildTimetableEntry( e );
+            if( isAppendedNextDayBlock == false && new Date(e.start.dateTime).getDate() === end.getDate() ){
+              var $NightNight = $( document.createElement('small') )
+                                  .addClass( 'pl-1 night-night')
+                                  .text( 'Night night~' );
+
+              var $nextDayBlock = $( document.createElement('div') )
+                                    .addClass( 'mb-1 next-day-block' )
+                                    .append( $NightNight );
+              $timeTableContext.append($nextDayBlock);
+              isAppendedNextDayBlock = true;
+            }
+            $timeTableContext.append( $eventDiv );
           }
           });
 
