@@ -449,6 +449,7 @@ span[style]{
   display: inline-block;
   width: 82%;
   margin-left: 9%;
+  height: 9px;
 }
 .night-night{
   float: right;
