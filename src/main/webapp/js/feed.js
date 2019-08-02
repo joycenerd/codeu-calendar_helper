@@ -1,6 +1,10 @@
+// Get ?filter=XYZ parameter value
+var url = new URL(window.location.href);
+var filter = url.searchParams.get("filter");
+
 // Fetch messages and add them to the page.
 function fetchMessages() {
-  const url = '/feed';
+  const url = '/feed?filter=' + encodeURIComponent(filter);
   fetch(url)
     .then((response) => {
       return response.json();
