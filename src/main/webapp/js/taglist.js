@@ -37,27 +37,17 @@ function myFunction() {
 }
 
 function makeList(message) {
-    // Establish the array which acts as a data source for the list
-
-    const listData = message.text.match(/#\w+/g);
     // Make a container element for the list
     const listContainer = document.createElement("div");
-    if (listData == null) return listContainer; //!!!!!!!!!!!!!!!!!!!!!!! important
+    // create an item for each one
+    const listItem = document.createElement("li");
+    const a = document.createElement("a");
+    a.textContent = message;
+    a.setAttribute("href", "/feed.html?filter=" + encodeURIComponent(message));
+    listItem.appendChild(a);
+    // Add listItem to the listElement
+    listContainer.appendChild(listItem);
 
-    // Set up a loop that goes through the items in listItems one at a time
-    const numberOfListItems = listData.length;
-
-    for (var i = 0; i < numberOfListItems; ++i) {
-        // create an item for each one
-        const listItem = document.createElement("li");
-        const a = document.createElement("a");
-        a.textContent = listData[i];
-        a.setAttribute("href", "/feed.html?filter=" + encodeURIComponent(listData[i]));
-        listItem.appendChild(a);
-        // Add listItem to the listElement
-        listContainer.appendChild(listItem);
-
-    }
     return listContainer;
 }
 
