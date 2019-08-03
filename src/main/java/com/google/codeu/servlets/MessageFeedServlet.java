@@ -37,7 +37,7 @@ public class MessageFeedServlet extends HttpServlet {
 
     List<Message> messages = datastore.getAllMessages();
     if (filter != null && filter.length() > 0) {
-      messages.removeIf(message -> !message.getText().matches(Pattern.quote(filter)));
+      messages.removeIf(message -> !message.getText().matches(".*" + Pattern.quote(filter) + ".*"));
     }
     Gson gson = new Gson();
     String json = gson.toJson(messages);
