@@ -4,7 +4,7 @@ var filter = url.searchParams.get("filter");
 
 // Fetch messages and add them to the page.
 function fetchMessages() {
-  const url = '/feed?filter=' + encodeURIComponent(filter);
+  const url = '/feed?filter=' + (filter != null ? encodeURIComponent(filter) : "");
   fetch(url)
     .then((response) => {
       return response.json();
