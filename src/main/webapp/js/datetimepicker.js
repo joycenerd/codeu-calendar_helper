@@ -66,7 +66,7 @@
                 var $content = createContent();
                 $body.append($content);
                 var offset = elem.offset();
-                $content.css({ top: (offset.top + settings.positionShift.top) + "px", left: (offset.left + settings.positionShift.left) + "px" });
+                //$content.css({ top: (offset.top + settings.positionShift.top) + "px", left: (offset.left + settings.positionShift.left) + "px" });  //Offset to mouse position
                 feelDates(selectDate);
                 $win.on('click', function () {
                     $content.remove();
