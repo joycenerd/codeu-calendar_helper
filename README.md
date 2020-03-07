@@ -28,7 +28,7 @@ Currently we have stopped maintaining due to some reasons. If starting again we 
 
 ## Contribute to Calendar Helper
 
-If your are interested in this project please contact [joycnerd](https://github.com/joycenerd)
+If your are interested in this project please contact [joycenerd](https://github.com/joycenerd)
 
 ### Contributer
 
