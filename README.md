@@ -37,5 +37,3 @@ If your are interested in this project please contact [joycnerd](https://github.
 * [xuau34](https://github.com/xuau34)
 * [ChungYujoyce](https://github.com/ChungYujoyce)
 
-I
-
